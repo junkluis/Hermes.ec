@@ -8,7 +8,7 @@ class Rol(models.Model):
         ('DR', 'Drive'),
         ('CL', 'Client'),
     ]
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     user_rol = models.CharField(
         max_length=2,
         choices=ROL_CHOICES,
@@ -16,7 +16,7 @@ class Rol(models.Model):
     )
 
 class Driver(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     identification = models.CharField(max_length=30)
     license_number = models.CharField(max_length=100)
     status = models.ForeignKey('DriverStatus', on_delete=models.CASCADE)
