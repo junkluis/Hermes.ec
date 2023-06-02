@@ -1,0 +1,55 @@
+{% extends "Zeus/base.html" %}
+
+{% block main %}
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-strech">
+      <div class="card w-100">
+        <div class="card-body">
+          <div>
+            <div class="mb-3 mb-sm-0">
+                <div class="row alig n-items-start">
+                    <div class="col-9">
+                        <h5 class="card-title fw-semibold">List of Trucks</h5>
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-outline-primary m-1" onclick="window.location.href='/new_truck'"> <i class="ti ti-car-crash"></i> New Truck</button>
+                    </div>
+                </div>
+              <br/>
+              <div class="row alig n-items-start"></div>
+                <table id="myTable" class="display">
+                    <thead>
+                        <tr>
+                            <th> ID </th>
+                            <th> Driver </th>
+                            <th> Capacity </th>
+                            <th> Brand </th>
+                            <th> Color </th>
+                            <th> Actions </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for truck in truck_list %}
+                            <tr>
+                                <th>{{ truck.id }}</th>
+                                <th>{{ truck.driver }}</th>
+                                <th>{{ truck.capacity }}</th>
+                                <th>{{ truck.brand }}</th>
+                                <th>{{ truck.color }}</th>
+                                <th>
+                                    <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/truck/{{truck.id}}'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;
+                                    <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/delete/truck/{{truck.id}}'" title="Delete"><i class="ti ti-circle-minus"></i></button>
+                                </th>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+             </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}  

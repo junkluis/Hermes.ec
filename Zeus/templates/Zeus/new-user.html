@@ -13,39 +13,50 @@
               <br/>
               <div class="row alig n-items-start">
                 <form method="POST" class="post-form">
-                  {% csrf_token %}  
+                  {% csrf_token %}
                   <div class="row">
                     <div class="col-6">
-                      <label for="name" class="form-label">Name</label>
-                      <input type="text" class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                      <label for="identification" class="form-label">Identification</label>
+                      <input type="text"  {% if action == 'edit' %} value="{{ confirm_user.username }}" {% endif %} class="form-control" id="identification" name="identification" required="required" aria-describedby="emailHelp">
                     </div>
-                    <div class="col-6">
-                      <label for="lastName" class="form-label">Last Name</label>
-                      <input type="text" class="form-control" id="lastName" name="last_name" required="required" aria-describedby="emailHelp">
-                    </div>
-                  </div>
-                  <br/>
-                  <div class="row">
-                    <div class="col-6">
-                      <label for="email" class="form-label">Email</label>
-                      <input type="email" class="form-control" id="email" name="email" required="required" aria-describedby="emailHelp">
-                    </div>
-                    <div class="col-6">
-                      <label for="password" class="form-label">Password</label>
-                      <input type="password" class="form-control" id="password" name="password" required="required" aria-describedby="emailHelp">
-                    </div>
-                  </div>
-                  <br/>
-                  <div class="row">
                     <div class="col-6">
                       <label for="rol" class="form-label">Rol</label>
                       <select class="form-select" id="rol" name="rol">
                         <option value="AD">Admin</option>
                         <option value="DR">Driver</option>
                         <option value="CL">Client</option>
+                        <option value="NN">None</option>
                       </select>
                     </div>
                   </div>
+                  <br/>
+                  <div class="row">
+                    <div class="col-6">
+                      <label for="name" class="form-label">Name</label>
+                      <input type="text" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                    </div>
+                    <div class="col-6">
+                      <label for="lastName" class="form-label">Last Name</label>
+                      <input type="text" {% if action == 'edit' %} value="{{ confirm_user.last_name }}" {% endif %} class="form-control" id="lastName" name="last_name" required="required" aria-describedby="emailHelp">
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="row">
+                    <div class="col-6">
+                      <label for="email" class="form-label">Email</label>
+                      <input type="email" {% if action == 'edit' %} value="{{ confirm_user.email }}" {% endif %} class="form-control" id="email" name="email" required="required" aria-describedby="emailHelp">
+                    </div>
+                    <div class="col-6">
+                      <label for="password" class="form-label">Password</label>
+                      <input type="password" class="form-control" id="password" name="password" required="required" aria-describedby="emailHelp">
+                    </div>
+                  </div>
+                  {% if action == 'edit' %}
+                    <input type="hidden" value="{{ confirm_user.id }}" class="form-control" id="user_id" name="user_id" >
+                    <input type="hidden" value="user" class="form-control" id="object" name="object" >
+                  {% endif %}
+                  
+                  <br/>
                   <br/>
                   <button type="submit" class="btn btn-primary m-1">Save</button>
                 </form>

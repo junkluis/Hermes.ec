@@ -42,11 +42,11 @@
                                 {% elif user.user_rol == 'DR' %}
                                   <th><i class="ti ti-car"></i> Driver</th>
                                 {% else %}
-                                  <th> </th>
+                                  <th><i class="ti ti-accessible-off"></i> None </th>
                                 {% endif %}
                                 <th>
-                                    <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/not_implemented'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;
-                                    <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/not_implemented'" title="Delete"><i class="ti ti-circle-minus"></i></button>
+                                    <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/user/{{user.id}}'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;
+                                    <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/delete/user/{{user.id}}'" title="Delete"><i class="ti ti-circle-minus"></i></button>
                                 </th>
                             </tr>
                         {% endfor %}

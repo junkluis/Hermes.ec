@@ -7,7 +7,11 @@ urlpatterns = [
     path("login", views.login_zeus, name="login"),
     path("dashboard", views.dashboard, name="dashboard"),
     path("users", views.users, name="users"),
+    path("trucks", views.trucks, name="trucks"),
     path("new_user", views.new_user, name="new_user"),
+    path("new_truck", views.new_truck, name="new_truck"),
+    path("delete/<str:object>/<int:key_id>", views.delete, name="delete"),
+    path("edit/<str:object>/<int:key_id>", views.edit, name="edit"),
     path("logout", views.logout_zeus, name="logout"),
     path("not_implemented", views.not_implemented, name="not_implemented"),
     
