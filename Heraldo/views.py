@@ -101,37 +101,33 @@ def get_orders(request):
             rol = user_rol.first().user_rol
             if rol == 'DR':
                 order_list = Order.objects.filter(driver=user_info)
-                order_list_json = []
-                for order in order_list:
-                    order_json = model_to_dict(order)
-                    order_json['responsible'] = { 
-                        'identification': order.responsible.username,
-                        'full_name': order.responsible.first_name + '' + order.responsible.last_name,
-                     }
-                    order_json['driver'] = { 
-                        'identification': order.driver.username,
-                        'full_name': order.driver.first_name + '' + order.driver.last_name,
-                    }
-                    order_json['client'] = { 
-                        'identification': order.client.username,
-                        'full_name': order.client.first_name + '' + order.client.last_name,
-                    }
-                    order_json['truck'] = model_to_dict(order.truck)
-                    order_list_json.append(order_json)
-                
-                context['orders'] = order_list_json
-
             elif rol == 'CL':
-                pass
+                order_list = Order.objects.filter(client=user_info)
 
             else:
                 context['error'] = True
                 context['error_message'] = 'Invalid Rol'
                 return Response(context)
-
             
-
-
+            order_list_json = []
+            for order in order_list:
+                order_json = model_to_dict(order)
+                order_json['responsible'] = { 
+                    'identification': order.responsible.username,
+                    'full_name': order.responsible.first_name + '' + order.responsible.last_name,
+                    }
+                order_json['driver'] = { 
+                    'identification': order.driver.username,
+                    'full_name': order.driver.first_name + '' + order.driver.last_name,
+                }
+                order_json['client'] = { 
+                    'identification': order.client.username,
+                    'full_name': order.client.first_name + '' + order.client.last_name,
+                }
+                order_json['truck'] = model_to_dict(order.truck)
+                order_list_json.append(order_json)
+            
+            context['orders'] = order_list_json
         return Response(context)
     
     context['Message'] = 'Endpoint obtiene la informacion de ordenes'
