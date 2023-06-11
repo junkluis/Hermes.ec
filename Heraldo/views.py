@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.forms.models import model_to_dict
 
+from Zeus.constants import USER_ROL
+
 
 
 def index(request):
@@ -56,9 +58,9 @@ def user_information(request):
 
         user_rol = Rol.objects.filter(user=user.first())
         if len(user_rol) == 0:
-            context['rol'] = 'None'
+            context['rol'] = USER_ROL['NN']
         else:
-            context['rol'] = user_rol.first().user_rol
+            context['rol'] =  USER_ROL[user_rol.first().user_rol] 
         return Response(context)
     
     context['Message'] = 'Endpoint obtiene la informacion del usuario'
