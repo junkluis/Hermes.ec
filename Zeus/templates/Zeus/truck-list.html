@@ -24,6 +24,7 @@
                             <th> </th>
                             <th> Conductor </th>
                             <th> Capacidad </th>
+                            <th> Placa </th>
                             <th> Marca </th>
                             <th> Color </th>
                             <th> Acciones </th>
@@ -44,8 +45,9 @@
                                 </th>
                                 <th>{{ truck.driver }}</th>
                                 <th>{{ truck.capacity }}</th>
+                                <th>{{ truck.license }}</th>
                                 <th>{{ truck.brand }}</th>
-                                <th>{{ truck.color }}</th>
+                                <th><div style="background-color:{{ truck.color }};">&nbsp</div> </th>
                                 <th>
                                   {% if truck.is_active is True %} 
                                     <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/truck/{{truck.id}}'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;

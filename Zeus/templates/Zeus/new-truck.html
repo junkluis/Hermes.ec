@@ -33,7 +33,7 @@
                   <div class="row">
                     <div class="col-4">
                         <label for="capacity" class="form-label">Capacidad</label>
-                        <input type="number" {% if action == 'edit' %} value="{{ confirm_truck.capacity }}" {% endif %}  class="form-control" id="capacity" name="capacity" required="required" aria-describedby="emailHelp">
+                        <input type="number" min="0" {% if action == 'edit' %} value="{{ confirm_truck.capacity }}" {% endif %}  class="form-control" id="capacity" name="capacity" required="required" aria-describedby="emailHelp">
                     </div>
                     <div class="col-2">
                         <label for="unit" class="form-label">Unidad</label>
@@ -42,9 +42,9 @@
                             <option value="Lb">Lb</option>
                         </select>
                     </div>
-                    <div class="col-6">
+                    <div class="col-1">
                         <label for="color" class="form-label">Color</label>
-                        <input type="text" {% if action == 'edit' %} value="{{ confirm_truck.color }}" {% endif %}  class="form-control" id="color" name="color" aria-describedby="emailHelp">
+                        <input type="color" {% if action == 'edit' %} value="{{ confirm_truck.color }}" {% else %} value="#ff0000"  {% endif %}  class="form-control" id="color" name="color" aria-describedby="emailHelp">
                     </div>
                   </div>
                   <br/>

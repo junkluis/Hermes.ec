@@ -151,6 +151,7 @@ def trucks(request):
             'capacity': str(truck.capacity) + ' ' +truck.measurement, 
             'brand': truck.brand,
             'color': truck.color,
+            'license': truck.license,
             'is_active': truck.is_active
         })
     context['truck_list'] = truck_list_json
