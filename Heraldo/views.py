@@ -70,7 +70,7 @@ def user_information(request):
             if len(trucks) > 0:
                 for truck in trucks:
                     list_trucks.append(model_to_dict(truck))
-                context['truck'] = list_trucks
+                context['trucks'] = list_trucks
 
         return Response(context)
     
