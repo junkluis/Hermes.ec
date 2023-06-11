@@ -1,8 +1,12 @@
 from django.http import HttpResponse
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
+from Heraldo.models import Rol, Driver, DriverStatus, Truck
+from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from django.forms.models import model_to_dict
+
 
 
 def index(request):
@@ -24,3 +28,38 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+@api_view(['GET', 'POST'])
+def hello_world(request):
+    if request.method == 'POST':
+        return Response({"message": "Got some data!", "data": request.data})
+    return Response({"message": "Hello, world!"})
+
+@api_view(['GET', 'POST'])
+def user_information(request):
+    context = {}
+    if request.method == 'POST':
+        username = request.data.get('username')
+        user = User.objects.filter(username=username)
+        if len(user) == 0:
+            context['error'] = True
+            context['error_message'] = 'User not found'
+            return Response(context)
+
+        user_info = user.first()
+
+        context['username'] = user_info.username
+        context['email'] = user_info.email
+        context['first_name'] = user_info.first_name
+        context['last_name'] = user_info.last_name
+        context['last_login'] = user_info.last_login
+
+        user_rol = Rol.objects.filter(user=user.first())
+        if len(user_rol) == 0:
+            context['rol'] = 'None'
+        else:
+            context['rol'] = user_rol.first().user_rol
+        return Response(context)
+    
+    context['Message'] = 'Endpoint obtiene la informacion del usuario'
+    return Response(context)
