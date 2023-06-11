@@ -57,6 +57,7 @@ def users(request):
             'last_name': user.last_name,
             'email': user.email,
             'user_rol': user.user_rol,
+            'username': user.username,
         })
     context['user_list'] = user_list_json
     return render(request, 'Zeus/user-list.html', context)

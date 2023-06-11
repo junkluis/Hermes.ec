@@ -8,7 +8,7 @@
           <div>
             <div class="mb-3 mb-sm-0">
                 <div class="row alig n-items-start">
-                  <h5 class="card-title fw-semibold">New User</h5>
+                  <h5 class="card-title fw-semibold">Nuevo Usuario</h5>
                 </div>
               <br/>
               <div class="row alig n-items-start">
@@ -16,7 +16,7 @@
                   {% csrf_token %}
                   <div class="row">
                     <div class="col-6">
-                      <label for="identification" class="form-label">Identification</label>
+                      <label for="identification" class="form-label">Identificación</label>
                       <input type="text"  {% if action == 'edit' %} value="{{ confirm_user.username }}" {% endif %} class="form-control" id="identification" name="identification" required="required" aria-describedby="emailHelp">
                     </div>
                     <div class="col-6">
@@ -32,11 +32,11 @@
                   <br/>
                   <div class="row">
                     <div class="col-6">
-                      <label for="name" class="form-label">Name</label>
+                      <label for="name" class="form-label">Nombre</label>
                       <input type="text" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
                     </div>
                     <div class="col-6">
-                      <label for="lastName" class="form-label">Last Name</label>
+                      <label for="lastName" class="form-label">Apellido</label>
                       <input type="text" {% if action == 'edit' %} value="{{ confirm_user.last_name }}" {% endif %} class="form-control" id="lastName" name="last_name" required="required" aria-describedby="emailHelp">
                     </div>
                   </div>
@@ -47,7 +47,7 @@
                       <input type="email" {% if action == 'edit' %} value="{{ confirm_user.email }}" {% endif %} class="form-control" id="email" name="email" required="required" aria-describedby="emailHelp">
                     </div>
                     <div class="col-6">
-                      <label for="password" class="form-label">Password</label>
+                      <label for="password" class="form-label">Contraseña</label>
                       <input type="password" class="form-control" id="password" name="password" required="required" aria-describedby="emailHelp">
                     </div>
                   </div>
@@ -58,7 +58,8 @@
                   
                   <br/>
                   <br/>
-                  <button type="submit" class="btn btn-primary m-1">Save</button>
+                  <a href="/users" class="btn btn-outline-dark m-1">Cancelar</a>&nbsp;&nbsp;&nbsp;
+                  <button type="submit" class="btn btn-primary m-1">Guardar</button>
                 </form>
              </div>
 

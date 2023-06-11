@@ -9,10 +9,10 @@
             <div class="mb-3 mb-sm-0">
                 <div class="row alig n-items-start">
                     <div class="col-9">
-                        <h5 class="card-title fw-semibold">List of User</h5>
+                        <h5 class="card-title fw-semibold">Lista de usuarios</h5>
                     </div>
                     <div class="col-3">
-                        <button type="button" class="btn btn-outline-primary m-1" onclick="window.location.href='/new_user'"> <i class="ti ti-user-plus"></i> New User</button>
+                        <button type="button" class="btn btn-outline-primary m-1" onclick="window.location.href='/new_user'"> <i class="ti ti-user-plus"></i> Nuevo Usuario</button>
                     </div>
                 </div>
               <br/>
@@ -21,19 +21,19 @@
                     <thead>
                         <tr>
                             <th> ID </th>
-                            <th> First Name </th>
-                            <th> Last Name </th>
+                            <th> Nombre </th>
+                            <th> Identificación </th>
                             <th> Email </th>
                             <th> Rol </th>
-                            <th> Actions </th>
+                            <th> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in user_list %}
                             <tr>
                                 <th>{{ user.id }}</th>
-                                <th>{{ user.name }}</th>
-                                <th>{{ user.last_name }}</th>
+                                <th>{{ user.name }} {{ user.last_name }}</th>
+                                <th>{{ user.username }}</th>
                                 <th>{{ user.email }}</th>
                                 {% if user.user_rol == 'AD' %}
                                   <th><i class="ti ti-device-desktop-analytics"></i> Admin</th>

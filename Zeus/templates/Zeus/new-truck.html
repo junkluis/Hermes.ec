@@ -8,7 +8,7 @@
           <div>
             <div class="mb-3 mb-sm-0">
                 <div class="row alig n-items-start">
-                  <h5 class="card-title fw-semibold">New Truck</h5>
+                  <h5 class="card-title fw-semibold">Nuevo Camión</h5>
                 </div>
               <br/>
               <div class="row alig n-items-start">
@@ -16,7 +16,7 @@
                   {% csrf_token %}
                   <div class="row">
                     <div class="col-6">
-                        <label for="driver" class="form-label">Driver</label>
+                        <label for="driver" class="form-label">Conductor</label>
                         <select class="form-select" id="driver" name="driver">
                             {% for driver in driver_list_json %}
                                 <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
@@ -25,18 +25,18 @@
                         </select>
                     </div>
                     <div class="col-6">
-                        <label for="license" class="form-label">License</label>
+                        <label for="license" class="form-label">Licencia</label>
                         <input type="text" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" required="required" aria-describedby="emailHelp">
                     </div>
                   </div>
                   <br/>
                   <div class="row">
                     <div class="col-4">
-                        <label for="capacity" class="form-label">Capacity</label>
+                        <label for="capacity" class="form-label">Capacidad</label>
                         <input type="number" {% if action == 'edit' %} value="{{ confirm_truck.capacity }}" {% endif %}  class="form-control" id="capacity" name="capacity" required="required" aria-describedby="emailHelp">
                     </div>
                     <div class="col-2">
-                        <label for="unit" class="form-label">Unit.</label>
+                        <label for="unit" class="form-label">Unidad</label>
                         <select class="form-select" id="unit" name="unit">
                             <option value="Kg">Kg</option>
                             <option value="Lb">Lb</option>
@@ -50,11 +50,11 @@
                   <br/>
                   <div class="row">
                     <div class="col-6">
-                        <label for="brand" class="form-label">Brand</label>
+                        <label for="brand" class="form-label">Marca</label>
                         <input type="text" {% if action == 'edit' %} value="{{ confirm_truck.brand }}" {% endif %}  class="form-control" id="brand" name="brand" aria-describedby="emailHelp">
                     </div>
                     <div class="col-6">
-                        <label for="year" class="form-label">Year</label>
+                        <label for="year" class="form-label">Año</label>
                         <select class="form-select" id="driver" name="year">
                             {% for year in car_years_choices %}
                                 <option value="{{year}}">{{ year }}</option>
@@ -69,7 +69,8 @@
                   </div>
                   <br/>
                   <br/>
-                  <button type="submit" class="btn btn-primary m-1">Save</button>
+                  <a href="/trucks" class="btn btn-outline-dark m-1">Cancelar</a>&nbsp;&nbsp;&nbsp;
+                  <button type="submit" class="btn btn-primary m-1">Guardar</button>
                 </form>
              </div>
 
