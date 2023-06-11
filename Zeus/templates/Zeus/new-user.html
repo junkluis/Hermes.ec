@@ -20,12 +20,11 @@
                       <input type="text"  {% if action == 'edit' %} value="{{ confirm_user.username }}" {% endif %} class="form-control" id="identification" name="identification" required="required" aria-describedby="emailHelp">
                     </div>
                     <div class="col-6">
-                      <label for="rol" class="form-label">Rol</label>
-                      <select class="form-select" id="rol" name="rol">
-                        <option value="AD">Admin</option>
-                        <option value="DR">Driver</option>
-                        <option value="CL">Client</option>
-                        <option value="NN">None</option>
+                      <label for="rol" class="form-label">Tipo</label>
+                      <select class="form-select" >
+                        <option>Cedula</option>
+                        <option>Pasaporte</option>
+                        <option>Identificacion Exterior</option>
                       </select>
                     </div>
                   </div>
@@ -51,6 +50,20 @@
                       <input type="password" class="form-control" id="password" name="password" required="required" aria-describedby="emailHelp">
                     </div>
                   </div>
+                  <br />
+                  <div class="row">
+                    <div class="col-6">
+                      <label for="rol" class="form-label">Rol</label>
+                      <select class="form-select" id="rol" name="rol">
+                        <option value="AD">Admin</option>
+                        <option value="DR">Driver</option>
+                        <option value="CL">Client</option>
+                        <option value="NN">None</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  
                   {% if action == 'edit' %}
                     <input type="hidden" value="{{ confirm_user.id }}" class="form-control" id="user_id" name="user_id" >
                     <input type="hidden" value="user" class="form-control" id="object" name="object" >
@@ -65,6 +78,17 @@
 
             </div>
           </div>
+          <br />
+          <br />
+          {% if error == True %}
+          <div class="alert alert-danger" role="alert">
+            <b> No fue posible guardar por los siguientes errores:</b>
+            
+            {% for error_message in error_list %}
+              <div> - {{ error_message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>

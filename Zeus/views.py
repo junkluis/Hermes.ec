@@ -1,5 +1,5 @@
 
-
+import re
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -19,21 +19,38 @@ def index(request):
     return redirect('dashboard')
 
 def login_zeus(request):
+    context = {}
     if request.method =='POST':
         try:
             email = request.POST["email"]
             password = request.POST["password"]
-            username = User.objects.get(email=email).username
-            user = authenticate(request, username=username, password=password)
+            user = User.objects.get(email=email)
+            try:
+                rol = Rol.objects.get(user=user)
+            except:
+                context['error'] = True
+                context['error_message'] = "El usuario no tiene permisos suficientes"
+                return render(request, 'Zeus/login.html', context)
+                
+            if rol.user_rol != 'AD':
+                context['error'] = True
+                context['error_message'] = "El usuario no tiene permisos suficientes"
+                return render(request, 'Zeus/login.html', context)
+
+            user = authenticate(request, username=user.username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('dashboard')
             else:
-                return render(request, 'Zeus/login.html', {})
+                context['error'] = True
+                context['error_message'] = "El usuario o contraseña son inválidos"
+                return render(request, 'Zeus/login.html', context)
         except:
-            return render(request, 'Zeus/login.html', {})
+            context['error'] = True
+            context['error_message'] = "El usuario o contraseña son inválidos"
+            return render(request, 'Zeus/login.html', context)
     else:
-        return render(request, 'Zeus/login.html', {})
+        return render(request, 'Zeus/login.html', context)
     
 @login_required(login_url="/login")
 def dashboard(request):
@@ -42,7 +59,7 @@ def dashboard(request):
 @login_required(login_url="/login")
 def users(request):
     context = {}
-    user_list = User.objects.filter(is_active=True)
+    user_list = User.objects.all()
     user_list_json = []
     for user in user_list:
         try:
@@ -58,6 +75,7 @@ def users(request):
             'email': user.email,
             'user_rol': user.user_rol,
             'username': user.username,
+            'is_active': user.is_active,
         })
     context['user_list'] = user_list_json
     return render(request, 'Zeus/user-list.html', context)
@@ -65,12 +83,35 @@ def users(request):
 @login_required(login_url="/login")
 def new_user(request):
     if request.method =='POST':
+        context = {}
+
         identification = request.POST["identification"]
         name = request.POST["name"]
         last_name = request.POST["last_name"]
         email = request.POST["email"]
         password = request.POST["password"]
         rol = request.POST["rol"]
+
+        error_list = []
+        user_exist = User.objects.filter(username=identification)
+        if len(user_exist) > 0:
+            error_list.append('La Identificación ya fue usada')
+        
+        password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
+        if re.match(password_pattern, password) is None:
+            error_list.append('La contraseña debe contener al menos 8 caracteres, una minúscula, una mayúscula y un número')
+        
+        if len(error_list) > 0:
+            context['error'] = True
+            context['error_list'] = error_list
+            context['confirm_user'] = {
+                'username': identification,
+                'first_name': name,
+                'last_name': last_name,
+                'last_name': email,
+            }
+            context['action'] = 'edit'
+            return render(request, 'Zeus/new-user.html', context)
 
         new_user = User.objects.create(
             username=identification,
@@ -96,7 +137,7 @@ def new_user(request):
 @login_required(login_url="/login")
 def trucks(request):
     context = {}
-    truck_list = Truck.objects.filter(is_active=True)
+    truck_list = Truck.objects.all()
     truck_list_json = []
     for truck in truck_list:
         driver = truck.user
@@ -110,6 +151,7 @@ def trucks(request):
             'capacity': str(truck.capacity) + ' ' +truck.measurement, 
             'brand': truck.brand,
             'color': truck.color,
+            'is_active': truck.is_active
         })
     context['truck_list'] = truck_list_json
     return render(request, 'Zeus/truck-list.html', context)
@@ -162,12 +204,16 @@ def delete(request, object, key_id):
     if request.method =='POST':
         if request.POST["object"] == 'user':
             user_id = request.POST["id"]
-            User.objects.get(id=user_id).delete()
+            user = User.objects.get(id=user_id)
+            user.is_active = False
+            user.save()
             return redirect('users')
 
         elif request.POST["object"] == 'truck':
             truck_id = request.POST["id"]
-            Truck.objects.get(id=truck_id).delete()
+            truck = Truck.objects.get(id=truck_id)
+            truck.is_active = False
+            truck.save()
             return redirect('trucks')
 
     else:
@@ -182,12 +228,26 @@ def delete(request, object, key_id):
             truck_json = model_to_dict(truck)
             context['confirm_truck'] = truck_json
         return render(request, 'Zeus/are-you-sure.html', context)
+
+@login_required(login_url="/login")
+def reactivate(request, object, key_id):
+    if object == 'user':
+        user = User.objects.get(pk=key_id)
+        user.is_active = True
+        user.save()
+        return redirect('users')
+
+    elif object == 'truck':
+        truck = Truck.objects.get(pk=key_id)
+        truck.is_active = True
+        truck.save()
+        return redirect('trucks')
     
 @login_required(login_url="/login")
 def edit(request, object, key_id):
     if request.method =='POST':
         if request.POST["object"] == 'user':
-            
+            context = {}
             user_id = request.POST["user_id"]
             user = User.objects.get(id=user_id)
 
@@ -197,6 +257,23 @@ def edit(request, object, key_id):
             email = request.POST["email"]
             password = request.POST["password"]
             rol = request.POST["rol"]
+
+            error_list = []
+            password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
+            if re.match(password_pattern, password) is None:
+                error_list.append('La contraseña debe contener al menos 8 caracteres, una minúscula, una mayúscula y un número')
+            
+            if len(error_list) > 0:
+                context['error'] = True
+                context['error_list'] = error_list
+                context['confirm_user'] = {
+                    'username': identification,
+                    'first_name': name,
+                    'last_name': last_name,
+                    'last_name': email,
+                }
+                context['action'] = 'edit'
+                return render(request, 'Zeus/new-user.html', context)
 
             user.username = identification
             user.first_name = name

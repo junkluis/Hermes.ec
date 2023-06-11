@@ -37,9 +37,15 @@
                     <label for="exampleInputPassword1" class="form-label">Password</label>
                     <input type="password" class="form-control" name="password" id="exampleInputPassword1">
                   </div>
-                  <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Sign In</a>
+                  <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Sign In</a></button>
                 </form>
+                {% if error == True %}
+                <div class="alert alert-danger" role="alert">
+                  {{ error_message }}
+                </div>
+                {% endif %}
               </div>
+              
             </div>
           </div>
         </div>

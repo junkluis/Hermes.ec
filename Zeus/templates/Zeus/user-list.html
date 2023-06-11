@@ -21,6 +21,7 @@
                     <thead>
                         <tr>
                             <th> ID </th>
+                            <th> </th>
                             <th> Nombre </th>
                             <th> Identificación </th>
                             <th> Email </th>
@@ -32,6 +33,15 @@
                         {% for user in user_list %}
                             <tr>
                                 <th>{{ user.id }}</th>
+                                <th>
+                                  <img 
+                                  {% if user.is_active is True %} 
+                                    src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Green_Light_Icon.svg"  title="ACTIVE"
+                                  {% else %}
+                                    src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Gray_Light_Icon.svg"  title="INACTIVE"
+                                  {% endif %}
+                                  alt="{{ user.is_active }}" width="20" >
+                                </th>
                                 <th>{{ user.name }} {{ user.last_name }}</th>
                                 <th>{{ user.username }}</th>
                                 <th>{{ user.email }}</th>
@@ -45,8 +55,13 @@
                                   <th><i class="ti ti-accessible-off"></i> None </th>
                                 {% endif %}
                                 <th>
+                                  {% if user.is_active is True %} 
                                     <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/user/{{user.id}}'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;
                                     <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/delete/user/{{user.id}}'" title="Delete"><i class="ti ti-circle-minus"></i></button>
+                                  {% else %}
+                                    <button type="submit" class="btn btn btn-light" onclick="window.location.href='/reactivate/user/{{user.id}}'" title="Reactivar">Reactivar</button> &nbsp;
+                                  {% endif %}
+                                    
                                 </th>
                             </tr>
                         {% endfor %}

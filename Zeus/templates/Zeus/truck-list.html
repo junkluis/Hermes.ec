@@ -21,6 +21,7 @@
                     <thead>
                         <tr>
                             <th> ID </th>
+                            <th> </th>
                             <th> Conductor </th>
                             <th> Capacidad </th>
                             <th> Marca </th>
@@ -32,13 +33,27 @@
                         {% for truck in truck_list %}
                             <tr>
                                 <th>{{ truck.id }}</th>
+                                <th>
+                                  <img 
+                                  {% if truck.is_active is True %} 
+                                    src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Green_Light_Icon.svg"  title="ACTIVE"
+                                  {% else %}
+                                    src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Gray_Light_Icon.svg"  title="INACTIVE"
+                                  {% endif %}
+                                  alt="{{ truck.is_active }}" width="20" >
+                                </th>
                                 <th>{{ truck.driver }}</th>
                                 <th>{{ truck.capacity }}</th>
                                 <th>{{ truck.brand }}</th>
                                 <th>{{ truck.color }}</th>
                                 <th>
+                                  {% if truck.is_active is True %} 
                                     <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/truck/{{truck.id}}'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;
                                     <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/delete/truck/{{truck.id}}'" title="Delete"><i class="ti ti-circle-minus"></i></button>
+                                  {% else %}
+                                    <button type="submit" class="btn btn btn-light" onclick="window.location.href='/reactivate/truck/{{truck.id}}'" title="Reactivar">Reactivar</button> &nbsp;
+                                  {% endif %}
+                                    
                                 </th>
                             </tr>
                         {% endfor %}
