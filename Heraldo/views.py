@@ -120,10 +120,9 @@ def get_orders(request):
                     order_list_json.append(order_json)
                 
                 context['orders'] = order_list_json
-                import pdb; pdb.set_trace()
 
             elif rol == 'CL':
-                import pdb; pdb.set_trace()
+                pass
 
             else:
                 context['error'] = True
