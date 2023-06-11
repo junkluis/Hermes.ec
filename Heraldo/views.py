@@ -56,11 +56,22 @@ def user_information(request):
         context['last_name'] = user_info.last_name
         context['last_login'] = user_info.last_login
 
-        user_rol = Rol.objects.filter(user=user.first())
+        user_rol = Rol.objects.filter(user=user_info)
+        
         if len(user_rol) == 0:
             context['rol'] = USER_ROL['NN']
         else:
-            context['rol'] =  USER_ROL[user_rol.first().user_rol] 
+            context['rol'] =  USER_ROL[user_rol.first().user_rol]
+
+        if user_rol.first().user_rol == 'DR':
+            context['trucks'] = []
+            trucks = Truck.objects.filter(user=user_info)
+            list_trucks = []
+            if len(trucks) > 0:
+                for truck in trucks:
+                    list_trucks.append(model_to_dict(truck))
+                context['truck'] = list_trucks
+
         return Response(context)
     
     context['Message'] = 'Endpoint obtiene la informacion del usuario'

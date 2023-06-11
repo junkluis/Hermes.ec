@@ -6,7 +6,7 @@ CAR_YEARS_CHOICES = [
 
 USER_ROL = {
     'AD':'Admin', 
-    'DR':'Drive', 
+    'DR':'Drive',
     'CL':'Client', 
     'NN':'None', 
 }
