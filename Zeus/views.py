@@ -1,4 +1,4 @@
-
+import csv
 import re
 import json
 from django.contrib.auth import authenticate, login, logout
@@ -7,12 +7,12 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
-from Heraldo.models import Rol, Driver, DriverStatus, Truck
+from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 
 
-from Zeus.constants import CAR_YEARS_CHOICES
+from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS
 
 
 def index(request):
@@ -157,6 +157,22 @@ def trucks(request):
     context['truck_list'] = truck_list_json
     return render(request, 'Zeus/truck-list.html', context)
 
+@login_required(login_url="/login")
+def orders(request):
+    context = {}
+    order_list = Order.objects.all()
+    order_list_json = []
+    for order in order_list:
+        order_json = model_to_dict(order)
+        order_json['client'] = order.client.first_name + ' ' + order.client.last_name
+        order_json['admin'] = order.responsible.first_name + ' ' + order.responsible.last_name
+        order_json['driver'] = order.driver.first_name + ' ' + order.driver.last_name
+        order_json['truck'] = order.truck.brand + ' - ' + order.truck.license
+        order_json['status'] = ORDER_STATUS[order.status]
+        order_list_json.append(order_json)
+    
+    context['order_list'] = order_list_json
+    return render(request, 'Zeus/order-list.html', context)
 
 @login_required(login_url="/login")
 def new_truck(request):
@@ -349,3 +365,33 @@ def not_implemented(request):
 def logout_zeus(request):
     logout(request)
     return redirect('login')
+
+def donwload_users(request):
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="csv/users.csv"'},
+    )
+    
+    user_list = User.objects.all().order_by('-is_active').values()
+    
+    writer = csv.writer(response)
+    writer.writerow(user_list[0].keys())
+    for user in user_list:
+        writer.writerow(user.values())
+
+    return response
+
+def donwload_truck(request):
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="csv/trucks.csv"'},
+    )
+    
+    truck_list = Truck.objects.all().order_by('-is_active').values()
+    
+    writer = csv.writer(response)
+    writer.writerow(truck_list[0].keys())
+    for truck in truck_list:
+        writer.writerow(truck.values())
+
+    return response

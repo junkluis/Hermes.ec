@@ -1,0 +1,73 @@
+{% extends "Zeus/base.html" %}
+
+{% block main %}
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-strech">
+      <div class="card w-100">
+        <div class="card-body">
+          <div>
+            <div class="mb-3 mb-sm-0">
+                <div class="row alig n-items-start">
+                    <div class="col-9">
+                        <h5 class="card-title fw-semibold">Lista de Ordenes</h5>
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-outline-primary m-1" onclick="window.location.href='/new_order'"> 
+                            <i class="ti ti-box"></i> Nuevo Orden
+                        </button>
+                    </div>
+                </div>
+              <br/>
+              <div class="row alig n-items-start"></div>
+                <table id="myTable" class="display">
+                    <thead>
+                        <tr>
+                            <th> ID </th>
+                            <th> </th>
+                            <th> Cliente </th>
+                            <th> Camion </th>
+                            <th> Ruta </th>
+                            <th> Estado </th>
+                            <th> Actions </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in order_list %}
+                            <tr>
+                                <th>{{ order.id }}</th>
+                                <th>
+                                  <img 
+                                  {% if order.is_active is True %} 
+                                    src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Green_Light_Icon.svg"  title="ACTIVE"
+                                  {% else %}
+                                    src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Gray_Light_Icon.svg"  title="INACTIVE"
+                                  {% endif %}
+                                  alt="{{ order.is_active }}" width="20" >
+                                </th>
+                                <th>{{ order.client }}</th>
+                                <th>{{ order.truck }}</th>
+                                <th>{{ order.origin }} - {{ order.destination }}</th>
+                                <th>{{ order.status }}</th>
+                                <th>
+                                  {% if order.is_active is True %} 
+                                    <button type="submit" class="btn btn btn-outline-info" onclick="window.location.href='/not_implemented'" title="Edit"><i class="ti ti-eye"></i> </button> &nbsp;  
+                                    <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/not_implemented'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;
+                                    <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/not_implemented'" title="Delete"><i class="ti ti-circle-minus"></i></button>
+                                  {% else %}
+                                    <button type="submit" class="btn btn btn-light" onclick="window.location.href='/not_implemented'" title="Reactivar">Reactivar</button> &nbsp;
+                                  {% endif %}
+                                    
+                                </th>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+             </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}  

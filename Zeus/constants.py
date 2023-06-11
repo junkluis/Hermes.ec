@@ -10,3 +10,11 @@ USER_ROL = {
     'CL':'Client', 
     'NN':'None', 
 }
+
+
+ORDER_STATUS = {
+    'PD': 'Pendiente',
+    'EP': 'En Proceso',
+    'FN': 'Finalizado',
+    'CN': 'Cancelado',
+}
