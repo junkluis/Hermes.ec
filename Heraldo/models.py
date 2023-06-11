@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -44,4 +45,28 @@ class Truck(models.Model):
     year = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
 
-
+class Order(models.Model):
+    ORDER_STATUS = [
+        ('PD', 'Pendiente'),
+        ('EP', 'En Proceso'),
+        ('FN', 'Finalizado'),
+        ('CN', 'Cancelado'),
+    ]
+    responsible = models.ForeignKey(User, on_delete=models.CASCADE)
+    driver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='conductor')
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client')
+    truck = models.ForeignKey('Truck', on_delete=models.CASCADE, null=True, blank=True)
+    content = models.CharField(max_length=255)
+    origin =  models.CharField(max_length=255)
+    origin_coord_lat =  models.CharField(max_length=255)
+    origin_coord_long =  models.CharField(max_length=255)
+    destination = models.CharField(max_length=255)
+    destination_coord_lat = models.CharField(max_length=255)
+    destination_coord_long = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=2,
+        choices=ORDER_STATUS,
+        default='PD',
+    )
+    creation_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    is_active = models.BooleanField(default=True)

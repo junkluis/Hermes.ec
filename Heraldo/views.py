@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.contrib.auth.models import User, Group
 from .serializers import UserSerializer, GroupSerializer
-from Heraldo.models import Rol, Driver, DriverStatus, Truck
+from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -75,4 +75,65 @@ def user_information(request):
         return Response(context)
     
     context['Message'] = 'Endpoint obtiene la informacion del usuario'
+    return Response(context)
+
+
+@api_view(['GET', 'POST'])
+def get_orders(request):
+    context = {}
+    if request.method == 'POST':
+        username = request.data.get('username')
+        user = User.objects.filter(username=username)
+
+        if len(user) == 0:
+            context['error'] = True
+            context['error_message'] = 'User not found'
+            return Response(context)
+        
+        user_info = user.first()
+        user_rol = Rol.objects.filter(user=user_info)
+        if len(user_rol) == 0:
+            context['error'] = True
+            context['error_message'] = 'Invalid Rol'
+            return Response(context)
+
+        else:
+            rol = user_rol.first().user_rol
+            if rol == 'DR':
+                order_list = Order.objects.filter(driver=user_info)
+                order_list_json = []
+                for order in order_list:
+                    order_json = model_to_dict(order)
+                    order_json['responsible'] = { 
+                        'identification': order.responsible.username,
+                        'full_name': order.responsible.first_name + '' + order.responsible.last_name,
+                     }
+                    order_json['driver'] = { 
+                        'identification': order.driver.username,
+                        'full_name': order.driver.first_name + '' + order.driver.last_name,
+                    }
+                    order_json['client'] = { 
+                        'identification': order.client.username,
+                        'full_name': order.client.first_name + '' + order.client.last_name,
+                    }
+                    order_json['truck'] = model_to_dict(order.truck)
+                    order_list_json.append(order_json)
+                
+                context['orders'] = order_list_json
+                import pdb; pdb.set_trace()
+
+            elif rol == 'CL':
+                import pdb; pdb.set_trace()
+
+            else:
+                context['error'] = True
+                context['error_message'] = 'Invalid Rol'
+                return Response(context)
+
+            
+
+
+        return Response(context)
+    
+    context['Message'] = 'Endpoint obtiene la informacion de ordenes'
     return Response(context)
