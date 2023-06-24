@@ -269,3 +269,39 @@ def update_truck_location(request):
     
     context['Message'] = 'Actualiza la ubicacion del Camion'
     return Response(context)
+
+@api_view(['GET', 'POST'])
+def order_location(request):
+    context = {}
+    if request.method == 'POST':
+        order_id = request.data.get('order_id')
+        latitud = request.data.get('latitud')
+        longitud = request.data.get('longitud')
+
+        current_order = Order.objects.filter(pk=order_id).first()
+
+        if current_order is None:
+            context['error'] = True
+            context['error_message'] = 'Order not found'
+            return Response(context)
+
+        try:
+            latitud = latitud.replace(',', '.')
+            longitud = longitud.replace(',', '.')
+
+            current_order.location_coord_lat = float(latitud)
+            current_order.location_coord_long = float(longitud)
+            current_order.save()
+
+            order_json = model_to_dict(current_order)
+            context['order'] = order_json
+
+        except Exception as e:
+            context['error'] = True
+            context['error_message'] = 'No fue posible Actualizar la orden'
+            context['error_context'] =  str(e)
+            return Response(context)
+        return Response(context)
+    
+    context['Message'] = 'Actualiza la ubicacion de la Orden'
+    return Response(context)

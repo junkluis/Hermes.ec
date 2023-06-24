@@ -1,6 +1,7 @@
 from pyexpat import model
 from django.contrib.auth.models import User
 from django.db import models
+import datetime
 
 
 class Rol(models.Model):
@@ -65,6 +66,9 @@ class Order(models.Model):
     destination = models.CharField(max_length=255)
     destination_coord_lat = models.CharField(max_length=255)
     destination_coord_long = models.CharField(max_length=255)
+    location_coord_lat = models.CharField(max_length=255, blank=True, null=True)
+    location_coord_long = models.CharField(max_length=255, blank=True, null=True)
+    location_update = models.DateTimeField(auto_now=True)
     status = models.CharField(
         max_length=2,
         choices=ORDER_STATUS,
@@ -72,3 +76,4 @@ class Order(models.Model):
     )
     creation_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     is_active = models.BooleanField(default=True)
+
