@@ -21,4 +21,6 @@ urlpatterns = [
     path('user_information', views.user_information, name='user_information'),
     path('get_orders', views.get_orders, name='get_orders'),
     path('get_active_order', views.get_active_order, name='get_active_order'), 
+    path('update_order', views.update_order, name='update_order'), 
+    
 ]

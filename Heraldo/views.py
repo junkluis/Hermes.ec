@@ -188,3 +188,48 @@ def get_active_order(request):
     
     context['Message'] = 'Endpoint obtiene la orden activa'
     return Response(context)
+
+@api_view(['GET', 'POST'])
+def update_order(request):
+    context = {}
+    if request.method == 'POST':
+        order_id = request.data.get('order_id')
+        new_status = request.data.get('status')
+
+        order_update = Order.objects.filter(pk=order_id).first()
+
+        if order_update is None:
+            context['error'] = True
+            context['error_message'] = 'Order not found'
+            return Response(context)
+        
+        if new_status not in ['PD', 'EP', 'FN', 'CN']:
+            context['error'] = True
+            context['error_message'] = 'not valid Status'
+            context['Opciones'] = ['PD', 'EP', 'FN', 'CN']
+            context['current_status'] = order_update.status
+        
+            return Response(context)
+
+        try:
+            order_update.status = str(new_status)
+            order_update.save()
+
+            order_json = model_to_dict(order_update)
+            context['active_order'] = order_json
+
+        except Exception as e:
+            context['error'] = True
+            context['error_message'] = 'No fue posible Actualizar la orden'
+            context['error_context'] =  str(e)
+            return Response(context)
+        return Response(context)
+    
+    context['Message'] = 'Endpoint actualiza el estado de la orden'
+    context['Opciones'] = { 
+        'PD':'Pendiente', 
+        'EP':'En Proceso',
+        'FN':'Finalizado',
+        'CN':'Cancelado'
+        }
+    return Response(context)
