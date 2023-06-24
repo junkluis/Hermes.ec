@@ -158,15 +158,15 @@ def get_active_order(request):
                 active_order = Order.objects.filter(driver=user_info, status='EP').first()
             elif rol == 'CL':
                 active_order = Order.objects.filter(client=user_info, status='EP').first()
-            
-            if len(active_order) == 0:
-                context['active_order'] = False
-                context['error_message'] = 'No hay pan'
-                return Response(context)
 
             else:
                 context['error'] = True
                 context['error_message'] = 'Invalid Rol'
+                return Response(context)
+            
+            if active_order is None:
+                context['active_order'] = False
+                context['error_message'] = 'No hay pan'
                 return Response(context)
             
             order_json = model_to_dict(active_order)
