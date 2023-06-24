@@ -43,6 +43,8 @@ class Truck(models.Model):
     color = models.CharField(max_length=255)
     brand = models.CharField(max_length=255)
     year = models.CharField(max_length=255)
+    lat = models.DecimalField(null=True, blank=True, max_digits=6, decimal_places=2)
+    log = models.DecimalField(null=True, blank=True, max_digits=6, decimal_places=2)
     is_active = models.BooleanField(default=True)
 
 class Order(models.Model):

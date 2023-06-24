@@ -233,3 +233,39 @@ def update_order(request):
         'CN':'Cancelado'
         }
     return Response(context)
+
+@api_view(['GET', 'POST'])
+def update_truck_location(request):
+    context = {}
+    if request.method == 'POST':
+        truck_id = request.data.get('truck_id')
+        latitud = request.data.get('latitud')
+        longitud = request.data.get('longitud')
+
+        truck = Truck.objects.filter(pk=truck_id).first()
+
+        if truck is None:
+            context['error'] = True
+            context['error_message'] = 'Truck not found'
+            return Response(context)
+
+        try:
+            latitud = latitud.replace(',', '.')
+            longitud = longitud.replace(',', '.')
+
+            truck.lat = float(latitud)
+            truck.log = float(longitud)
+            truck.save()
+
+            truck_json = model_to_dict(truck)
+            context['truck'] = truck_json
+
+        except Exception as e:
+            context['error'] = True
+            context['error_message'] = 'No fue posible Actualizar la orden'
+            context['error_context'] =  str(e)
+            return Response(context)
+        return Response(context)
+    
+    context['Message'] = 'Actualiza la ubicacion del Camion'
+    return Response(context)
