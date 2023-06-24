@@ -19,5 +19,6 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('hello_world', views.hello_world, name='hello'),
     path('user_information', views.user_information, name='user_information'),
-    path('get_orders', views.get_orders, name='get_orders')
+    path('get_orders', views.get_orders, name='get_orders'),
+    path('get_active_order', views.get_active_order, name='get_active_order'), 
 ]

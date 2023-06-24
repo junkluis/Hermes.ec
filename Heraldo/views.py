@@ -132,3 +132,59 @@ def get_orders(request):
     
     context['Message'] = 'Endpoint obtiene la informacion de ordenes'
     return Response(context)
+
+@api_view(['GET', 'POST'])
+def get_active_order(request):
+    context = {}
+    if request.method == 'POST':
+        username = request.data.get('username')
+        user = User.objects.filter(username=username)
+
+        if len(user) == 0:
+            context['error'] = True
+            context['error_message'] = 'User not found'
+            return Response(context)
+        
+        user_info = user.first()
+        user_rol = Rol.objects.filter(user=user_info)
+        if len(user_rol) == 0:
+            context['error'] = True
+            context['error_message'] = 'Invalid Rol'
+            return Response(context)
+
+        else:
+            rol = user_rol.first().user_rol
+            if rol == 'DR':
+                active_order = Order.objects.filter(driver=user_info, status='EP').first()
+            elif rol == 'CL':
+                active_order = Order.objects.filter(client=user_info, status='EP').first()
+            
+            if len(active_order) == 0:
+                context['active_order'] = False
+                context['error_message'] = 'No hay pan'
+                return Response(context)
+
+            else:
+                context['error'] = True
+                context['error_message'] = 'Invalid Rol'
+                return Response(context)
+            
+            order_json = model_to_dict(active_order)
+            order_json['responsible'] = { 
+                'identification': active_order.responsible.username,
+                'full_name': active_order.responsible.first_name + '' + active_order.responsible.last_name,
+                }
+            order_json['driver'] = { 
+                'identification': active_order.driver.username,
+                'full_name': active_order.driver.first_name + '' + active_order.driver.last_name,
+            }
+            order_json['client'] = { 
+                'identification': active_order.client.username,
+                'full_name': active_order.client.first_name + '' + active_order.client.last_name,
+            }
+            order_json['truck'] = model_to_dict(active_order.truck)
+            context['active_order'] = order_json
+        return Response(context)
+    
+    context['Message'] = 'Endpoint obtiene la orden activa'
+    return Response(context)
