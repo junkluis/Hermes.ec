@@ -10,6 +10,10 @@
   <link rel="shortcut icon" type="image/png" href="{% static 'images/logos/favicon.png' %}" />
   <link rel="stylesheet" href="{% static 'css/styles.min.css' %}" />
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+  
+  {% block custom_style %}
+  {% endblock %}
+   
 </head>
 <body style="background-image: url('https://www.cognidox.com/hubfs/6%20Tips%20for%20Choosing%20A%20Document%20Management%20System%20(1).webp')">
   <!--  Body Wrapper  -->
@@ -117,6 +121,8 @@
       $('#myTable').DataTable();
   } );
   </script> 
+  {% block custom_script %}
+  {% endblock %}
 </body>
 
 </html>

@@ -15,8 +15,12 @@ urlpatterns = [
     path("delete/<str:object>/<int:key_id>", views.delete, name="delete"),
     path("edit/<str:object>/<int:key_id>", views.edit, name="edit"),
     path("reactivate/<str:object>/<int:key_id>", views.reactivate, name="reactivate"),
+    path("view_orders/<str:order_id>", views.view_orders, name="view_orders"),
+
+
     path("logout", views.logout_zeus, name="logout"),
     path("not_implemented", views.not_implemented, name="not_implemented"),
+    
 
     path("donwload_users", views.donwload_users, name="donwload_users"),
     path("donwload_truck", views.donwload_truck, name="donwload_truck"),

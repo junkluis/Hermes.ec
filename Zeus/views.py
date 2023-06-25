@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 
 
-from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS
+from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY
 
 
 def index(request):
@@ -173,6 +173,27 @@ def orders(request):
     
     context['order_list'] = order_list_json
     return render(request, 'Zeus/order-list.html', context)
+
+@login_required(login_url="/login")
+def view_orders(request, order_id):
+    context = {}
+    #try:
+    order_info = Order.objects.filter(id=order_id).first()
+    context['order'] = order_info
+    context['gkey'] = MAP_KEY
+    
+    current_lat = float(order_info.location_coord_lat)
+    current_long = float(order_info.location_coord_long)
+    context['current_location'] = (current_lat, current_long)
+
+    destination_lat = float(order_info.destination_coord_lat)
+    destination_long = float(order_info.destination_coord_long)
+    context['destination_location'] = (destination_lat, destination_long)
+    return render(request, 'Zeus/order-view.html', context)
+    # except:
+      #  return redirect('dashboard')
+
+
 
 @login_required(login_url="/login")
 def new_truck(request):

@@ -50,7 +50,7 @@
                                 <th>{{ order.status }}</th>
                                 <th>
                                   {% if order.is_active is True %} 
-                                    <button type="submit" class="btn btn btn-outline-info" onclick="window.location.href='/not_implemented'" title="Edit"><i class="ti ti-eye"></i> </button> &nbsp;  
+                                    <button type="submit" class="btn btn btn-outline-info" onclick="window.location.href='/view_orders/{{order.id}}'" title="Edit"><i class="ti ti-map"></i> </button> &nbsp;  
                                     <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/not_implemented'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;
                                     <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/not_implemented'" title="Delete"><i class="ti ti-circle-minus"></i></button>
                                   {% else %}

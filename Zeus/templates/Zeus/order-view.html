@@ -1,0 +1,104 @@
+{% extends "Zeus/base.html" %}
+
+{% block custom_style %}
+<style>
+.mapholder{
+    height: 500px;
+    width: 100%;
+}
+
+#map {
+    height: 100%;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-strech">
+      <div class="card w-100">
+        <div class="card-body">
+          <div>
+            <div class="mb-3 mb-sm-0">
+                <div class="row alig n-items-start">
+                  <h5 class="card-title fw-semibold">Orden</h5>
+                </div>
+              <br/>
+              <div class="row alig n-items-start">
+                <div class="pageholder">
+                    <div class="titleholder"> 
+                    </div>
+                
+                    <div class="linkholder">
+                        <div id="googleMap" style="width:100%;height:400px;"></div>
+                    </div>
+                </div>
+             </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+{% endblock %}  
+
+{% block custom_script %}
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{gkey}}&callback=myMap"></script>
+<script> 
+
+
+function initMap() {
+    var pointA = new google.maps.LatLng({{ current_location.0 }} , {{ current_location.1 }}),
+        pointB = new google.maps.LatLng({{ destination_location.0 }} , {{ destination_location.1 }}),
+        myOptions = {
+            zoom: 15,
+            center: pointA
+        },
+        map = new google.maps.Map(document.getElementById('googleMap'), myOptions),
+        // Instantiate a directions service.
+        directionsService = new google.maps.DirectionsService,
+        directionsDisplay = new google.maps.DirectionsRenderer({
+            map: map
+        }),
+        markerA = new google.maps.Marker({
+            position: pointA,
+            title: "point A",
+            icon: 'https://static.wikia.nocookie.net/universe-of-smash-bros-lawl/images/5/5e/Mario_Kart_Mario.gif?size=200',
+            map: map,
+        }),
+        markerB = new google.maps.Marker({
+            position: pointB,
+            title: "point B",
+            map: map
+        });
+
+    // get route from A to B
+    calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB);
+
+}
+
+function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
+    directionsService.route({
+        origin: pointA,
+        destination: pointB,
+        avoidTolls: true,
+        avoidHighways: false,
+        travelMode: google.maps.TravelMode.DRIVING
+    }, function (response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+        } else {
+            window.alert('Directions request failed due to ' + status);
+        }
+    });
+}
+
+initMap();
+
+</script>
+
+{% endblock %}  

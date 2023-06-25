@@ -165,7 +165,7 @@ def get_active_order(request):
                 return Response(context)
             
             if active_order is None:
-                context['active_order'] = False
+                context['active_order'] = {}
                 context['error_message'] = 'No hay pan'
                 return Response(context)
             
