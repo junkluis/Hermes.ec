@@ -1,4 +1,5 @@
-{% extends "Zeus/base.html" %}
+{% extends "Zeus/base-v2.html" %}
+
 
 {% block main %}
 <div class="row">
@@ -12,8 +13,8 @@
                         <h5 class="card-title fw-semibold">Lista de Camiones</h5>
                     </div>
                     <div class="col-3">
-                        <button type="button" class="btn btn-outline-primary m-1" onclick="window.location.href='/new_truck'"> <i class="ti ti-car-crash"></i> Nuevo Camión</button>
-                        <button type="button" class="btn btn btn-outline-success m-1" onclick="window.location.href='/donwload_truck'"> <i class="ti ti-database"></i> Descargar respaldo</button>
+                        <button type="button" class="btn btn-outline-primary m-1" onclick="window.location.href='/new_truck'"> <i class="mdi mdi-truck"></i> Nuevo Camión</button>
+                        <button type="button" class="btn btn btn-outline-success m-1" onclick="window.location.href='/donwload_truck'"> <i class="mdi mdi-briefcase-download"></i> Descargar respaldo</button>
                     </div>
                 </div>
               <br/>
@@ -51,8 +52,8 @@
                                 <th><div style="background-color:{{ truck.color }};">&nbsp</div> </th>
                                 <th>
                                   {% if truck.is_active is True %} 
-                                    <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/truck/{{truck.id}}'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;
-                                    <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/delete/truck/{{truck.id}}'" title="Delete"><i class="ti ti-circle-minus"></i></button>
+                                    <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/truck/{{truck.id}}'" title="Edit"><i class="mdi mdi-grease-pencil"></i> </button> &nbsp;
+                                    <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/delete/truck/{{truck.id}}'" title="Delete"><i class="mdi mdi-delete"></i></button>
                                   {% else %}
                                     <button type="submit" class="btn btn btn-light" onclick="window.location.href='/reactivate/truck/{{truck.id}}'" title="Reactivar">Reactivar</button> &nbsp;
                                   {% endif %}

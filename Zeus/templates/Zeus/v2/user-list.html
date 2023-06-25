@@ -1,4 +1,5 @@
-{% extends "Zeus/base.html" %}
+{% extends "Zeus/base-v2.html" %}
+
 
 {% block main %}
 <div class="row">
@@ -12,8 +13,8 @@
                         <h5 class="card-title fw-semibold">Lista de usuarios</h5>
                     </div>
                     <div class="col-3">
-                        <button type="button" class="btn btn-outline-primary m-1" onclick="window.location.href='/new_user'"> <i class="ti ti-user-plus"></i> Nuevo Usuario</button>
-                        <button type="button" class="btn btn btn-outline-success m-1" onclick="window.location.href='/donwload_users'"> <i class="ti ti-database"></i> Descargar respaldo</button>
+                        <button type="button" class="btn btn-outline-primary m-1" onclick="window.location.href='/new_user'"> <i class="mdi mdi-account-check"></i> Nuevo Usuario</button>
+                        <button type="button" class="btn btn btn-outline-success m-1" onclick="window.location.href='/donwload_users'"> <i class="mdi mdi-briefcase-download"></i> Descargar respaldo</button>
                     </div>
                 </div>
               <br/>
@@ -47,18 +48,18 @@
                                 <th>{{ user.username }}</th>
                                 <th>{{ user.email }}</th>
                                 {% if user.user_rol == 'AD' %}
-                                  <th><i class="ti ti-device-desktop-analytics"></i> Admin</th>
+                                  <th><i class="mdi mdi-account-card-details"></i> Administrador</th>
                                 {% elif user.user_rol == 'CL' %}
-                                  <th><i class="ti ti-box-seam"></i> Client</th>
+                                  <th><i class="mdi mdi-account-outline"></i> Cliente</th>
                                 {% elif user.user_rol == 'DR' %}
-                                  <th><i class="ti ti-car"></i> Driver</th>
+                                  <th><i class="mdi mdi-truck-delivery"></i> Conductor</th>
                                 {% else %}
-                                  <th><i class="ti ti-accessible-off"></i> None </th>
+                                  <th><i class="mdi mdi-block-helper"></i> Ninguno </th>
                                 {% endif %}
                                 <th>
                                   {% if user.is_active is True %} 
-                                    <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/user/{{user.id}}'" title="Edit"><i class="ti ti-edit"></i> </button> &nbsp;
-                                    <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/delete/user/{{user.id}}'" title="Delete"><i class="ti ti-circle-minus"></i></button>
+                                    <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/user/{{user.id}}'" title="Edit"><i class="mdi mdi-grease-pencil"></i> </button> &nbsp;
+                                    <button type="submit" class="btn btn-outline-danger" onclick="window.location.href='/delete/user/{{user.id}}'" title="Delete"><i class="mdi mdi-delete"></i></button>
                                   {% else %}
                                     <button type="submit" class="btn btn btn-light" onclick="window.location.href='/reactivate/user/{{user.id}}'" title="Reactivar">Reactivar</button> &nbsp;
                                   {% endif %}

@@ -1,0 +1,96 @@
+{% extends "Zeus/base-v2.html" %}
+
+
+{% block main %}
+
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Nuevo Usuario</h4>
+        <form method="POST" class="post-form form-sample" autocomplete="off">
+          {% csrf_token %}
+          <p class="card-description">
+            Informacion personal
+          </p>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Identificacion</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control"   {% if action == 'edit' %} value="{{ confirm_user.username }}" {% endif %} class="form-control" id="identification" name="identification" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Tipo</label>
+                <div class="col-sm-9">
+                  <select class="form-control">
+                    <option>Cedula</option>
+                    <option>Pasaporte</option>
+                    <option>Identificacion del exterior</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Nombre</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Apellido</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.last_name }}" {% endif %} class="form-control" id="lastName" name="last_name" required="required" aria-describedby="emailHelp">
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Email</label>
+                <div class="col-sm-9">
+                  <input type="email" autocomplete="false" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.email }}" {% endif %} class="form-control" id="email" name="email" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Contraseña</label>
+                <div class="col-sm-9">
+                  <input type="password"  autocomplete="false" class="form-control" id="password" name="password" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Rol</label>
+                <div class="col-sm-9">
+                  <select class="form-select form-control" id="rol" name="rol">
+                    <option value="AD">Administrador</option>
+                    <option value="DR">Conductor</option>
+                    <option value="CL">Cliente</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <br/>
+          <a href="/users" class="btn btn-outline-dark m-1">Cancelar</a>&nbsp;&nbsp;&nbsp;
+          <button type="submit" class="btn btn-primary m-1">Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}  

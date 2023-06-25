@@ -47,7 +47,7 @@
 
 {% block custom_script %}
 
-<script src="https://maps.googleapis.com/maps/api/js?key={{gkey}}&callback=myMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{gkey}}&callback=initMap"></script>
 <script> 
 
 
@@ -67,7 +67,7 @@ function initMap() {
         markerA = new google.maps.Marker({
             position: pointA,
             title: "point A",
-            icon: 'https://static.wikia.nocookie.net/universe-of-smash-bros-lawl/images/5/5e/Mario_Kart_Mario.gif?size=200',
+            icon: 'https://cdn.iconscout.com/icon/premium/png-64-thumb/car-1991-997072.png?f=webp',
             map: map,
         }),
         markerB = new google.maps.Marker({

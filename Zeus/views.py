@@ -18,6 +18,10 @@ from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY
 def index(request):
     return redirect('dashboard')
 
+def dashboard_v2(request):
+    context = {}
+    return render(request, 'Zeus/base-v2.html', context)
+
 def login_zeus(request):
     context = {}
     if request.method =='POST':
@@ -30,12 +34,12 @@ def login_zeus(request):
             except:
                 context['error'] = True
                 context['error_message'] = "El usuario no tiene permisos suficientes"
-                return render(request, 'Zeus/login.html', context)
+                return render(request, 'Zeus/v2/login.html', context)
                 
             if rol.user_rol != 'AD':
                 context['error'] = True
                 context['error_message'] = "El usuario no tiene permisos suficientes"
-                return render(request, 'Zeus/login.html', context)
+                return render(request, 'Zeus/v2/login.html', context)
 
             user = authenticate(request, username=user.username, password=password)
             if user is not None:
@@ -44,17 +48,33 @@ def login_zeus(request):
             else:
                 context['error'] = True
                 context['error_message'] = "El usuario o contraseña son inválidos"
-                return render(request, 'Zeus/login.html', context)
+                return render(request, 'Zeus/v2/login.html', context)
         except:
             context['error'] = True
             context['error_message'] = "El usuario o contraseña son inválidos"
-            return render(request, 'Zeus/login.html', context)
+            return render(request, 'Zeus/v2/login.html', context)
     else:
-        return render(request, 'Zeus/login.html', context)
+        return render(request, 'Zeus/v2/login.html', context)
     
 @login_required(login_url="/login")
 def dashboard(request):
-    return render(request, 'Zeus/index.html', {})
+    context = {}
+    context['gkey'] = MAP_KEY
+
+    # Obtener Ordenes
+    ordenes = Order.objects.filter(status='EP')
+    ordenes_json = []
+    for orden in ordenes:
+        orden_json = {}
+        orden_json['camion'] = orden.truck.license
+        orden_json['ruta'] = orden.origin + ' - ' + orden.destination
+        orden_json['location'] = (orden.location_coord_lat, orden.location_coord_long)
+        orden_json['destination'] = (orden.destination_coord_lat, orden.destination_coord_long)
+        orden_json['status'] = orden.status
+        ordenes_json.append(orden_json)
+
+    context['ordenes'] = ordenes_json
+    return render(request, 'Zeus/v2/index.html', context)
 
 @login_required(login_url="/login")
 def users(request):
@@ -78,7 +98,7 @@ def users(request):
             'is_active': user.is_active,
         })
     context['user_list'] = user_list_json
-    return render(request, 'Zeus/user-list.html', context)
+    return render(request, 'Zeus/v2/user-list.html', context)
 
 @login_required(login_url="/login")
 def new_user(request):
@@ -111,7 +131,7 @@ def new_user(request):
                 'last_name': email,
             }
             context['action'] = 'edit'
-            return render(request, 'Zeus/new-user.html', context)
+            return render(request, 'Zeus/v2/new-user.html', context)
 
         new_user = User.objects.create(
             username=identification,
@@ -132,7 +152,7 @@ def new_user(request):
         context = {
             'action': 'new'
         }
-        return render(request, 'Zeus/new-user.html', context)
+        return render(request, 'Zeus/v2/new-user.html', context)
 
 @login_required(login_url="/login")
 def trucks(request):
@@ -155,7 +175,7 @@ def trucks(request):
             'is_active': truck.is_active
         })
     context['truck_list'] = truck_list_json
-    return render(request, 'Zeus/truck-list.html', context)
+    return render(request, 'Zeus/v2/truck-list.html', context)
 
 @login_required(login_url="/login")
 def orders(request):
@@ -172,7 +192,7 @@ def orders(request):
         order_list_json.append(order_json)
     
     context['order_list'] = order_list_json
-    return render(request, 'Zeus/order-list.html', context)
+    return render(request, 'Zeus/v2/order-list.html', context)
 
 @login_required(login_url="/login")
 def view_orders(request, order_id):
@@ -189,7 +209,7 @@ def view_orders(request, order_id):
     destination_lat = float(order_info.destination_coord_lat)
     destination_long = float(order_info.destination_coord_long)
     context['destination_location'] = (destination_lat, destination_long)
-    return render(request, 'Zeus/order-view.html', context)
+    return render(request, 'Zeus/v2/order-view.html', context)
     # except:
       #  return redirect('dashboard')
 
@@ -235,7 +255,7 @@ def new_truck(request):
         
         context['driver_list_json'] = driver_list_json
         context['car_years_choices'] = CAR_YEARS_CHOICES
-        return render(request, 'Zeus/new-truck.html', context)
+        return render(request, 'Zeus/v2/new-truck.html', context)
 
 @login_required(login_url="/login")
 def delete(request, object, key_id):
@@ -265,7 +285,7 @@ def delete(request, object, key_id):
             truck = Truck.objects.get(pk=key_id)
             truck_json = model_to_dict(truck)
             context['confirm_truck'] = truck_json
-        return render(request, 'Zeus/are-you-sure.html', context)
+        return render(request, 'Zeus/v2/are-you-sure.html', context)
 
 @login_required(login_url="/login")
 def reactivate(request, object, key_id):
@@ -311,7 +331,7 @@ def edit(request, object, key_id):
                     'last_name': email,
                 }
                 context['action'] = 'edit'
-                return render(request, 'Zeus/new-user.html', context)
+                return render(request, 'Zeus/v2/new-user.html', context)
 
             user.username = identification
             user.first_name = name
@@ -353,7 +373,7 @@ def edit(request, object, key_id):
             user = User.objects.get(id=key_id)
             user_json = model_to_dict(user)
             context['confirm_user'] = user_json
-            return render(request, 'Zeus/new-user.html', context)
+            return render(request, 'Zeus/v2/new-user.html', context)
 
         if object == 'truck':
             user_list = User.objects.filter(is_active=True)
@@ -378,10 +398,10 @@ def edit(request, object, key_id):
             truck_json = model_to_dict(truck)
             context['confirm_truck'] = truck_json
 
-            return render(request, 'Zeus/new-truck.html', context)
+            return render(request, 'Zeus/v2/new-truck.html', context)
 
 def not_implemented(request):
-    return render(request, 'Zeus/working.html', {})
+    return render(request, 'Zeus/v2/working.html', {})
 
 def logout_zeus(request):
     logout(request)

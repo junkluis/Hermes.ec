@@ -24,5 +24,9 @@ urlpatterns = [
 
     path("donwload_users", views.donwload_users, name="donwload_users"),
     path("donwload_truck", views.donwload_truck, name="donwload_truck"),
+
+
+    path("dashboard_v2", views.dashboard_v2, name="dashboard_v2"),
+    
     
 ]

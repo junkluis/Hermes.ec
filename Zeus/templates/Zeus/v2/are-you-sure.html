@@ -1,0 +1,63 @@
+{% extends "Zeus/base-v2.html" %}
+
+
+{% block main %}
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-strech">
+      <div class="card w-100">
+        <div class="card-body">
+          <div>
+            <div class="mb-3 mb-sm-0">
+                <div class="row alig n-items-start">
+                  <h5 class="card-title fw-semibold">Seguro que quieres desactivar?</h5>
+                </div>
+              <br/>
+              <div class="row alig n-items-start">
+                {% if confirm_user %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ confirm_user.first_name }} {{ confirm_user.last_name }}</h5>
+                        <p class="card-text">USUARIO</p>
+                        <p class="card-text"><b>Identificación:</b> {{ confirm_user.username }}</p>
+                        <p class="card-text"><b>ID:</b> {{ confirm_user.id }}</p>
+                        <br />
+                        <form method="POST" class="post-form">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{confirm_user.id}}" class="form-control" name="id">
+                            <input type="hidden" value="user" class="form-control" name="object">
+                            <a href="/users" class="btn btn-outline-dark">Cancelar</a>&nbsp;&nbsp;&nbsp;
+                            <button type="submit" class="btn btn-danger">Desactivar</button>
+                        </form>
+
+                    </div>
+                {% elif confirm_truck %}
+                    <div class="card-body">
+                        <h5 class="card-title">Licencia: {{ confirm_truck.license }}</h5>
+                        <p class="card-text">CAMION</p>
+                        <p class="card-text"><b>Capacidad:</b> {{ confirm_truck.capacity }} {{ confirm_truck.measurement }}</p>
+                        <p class="card-text"><b>Color:</b> {{ confirm_truck.color }} </p>
+                        <p class="card-text"><b>Marca:</b> {{ confirm_truck.brand }} </p>
+                        <p class="card-text"><b>Año:</b> {{ confirm_truck.year }} </p>
+                        <p class="card-text"><b>ID:</b> {{ confirm_truck.id }} </p>
+                        <br />
+                        <form method="POST" class="post-form">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{confirm_truck.id}}" class="form-control" name="id">
+                            <input type="hidden" value="truck" class="form-control" name="object">
+                            <a href="/trucks" class="btn btn-outline-dark">Cancelar</a>&nbsp;&nbsp;&nbsp;
+                            <button type="submit" class="btn btn-danger">Desactivar</button>
+                        </form>
+
+                    </div>
+                {% else %}
+                    Not option to delete
+                {% endif %}
+                
+             </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}  

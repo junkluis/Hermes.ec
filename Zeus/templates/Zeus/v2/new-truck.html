@@ -1,0 +1,107 @@
+{% extends "Zeus/base-v2.html" %}
+
+{% block main %}
+
+
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Nuevo Camion</h4>
+        <form method="POST" class="post-form form-sample" autocomplete="off">
+          {% csrf_token %}
+          <p class="card-description">
+            Informacion tecnica
+          </p>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Conductor</label>
+                <div class="col-sm-9"> 
+                  <select class="form-select form-control" id="driver" name="driver">
+                    {% for driver in driver_list_json %}
+                        <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
+                    {% endfor %}
+                    <option value="00">None</option>
+                </select>           
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Placa</label>
+                <div class="col-sm-9">
+                  <input type="text" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Capacidad</label>
+                <div class="col-sm-5">
+                  <input type="number" min="0" {% if action == 'edit' %} value="{{ confirm_truck.capacity }}" {% endif %}  class="form-control" id="capacity" name="capacity" required="required" aria-describedby="emailHelp">
+                </div>
+                <div class="col-sm-4">
+                  <select class="form-select form-control" id="unit" name="unit">
+                    <option value="Kg">Kg</option>
+                    <option value="Lb">Lb</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Color</label>
+                <div class="col-sm-2">
+                  <input type="color" {% if action == 'edit' %} value="{{ confirm_truck.color }}" {% else %} value="#ff0000"  {% endif %}  class="form-control" id="color" name="color" aria-describedby="emailHelp">
+                </div>
+                <div class="col-sm-7">
+                  <input type="text" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.last_name }}" {% endif %} class="form-control" id="lastName" name="last_name" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Marca</label>
+                <div class="col-sm-9">
+                  <input type="text" {% if action == 'edit' %} value="{{ confirm_truck.brand }}" {% endif %}  class="form-control" id="brand" name="brand" aria-describedby="emailHelp">                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Año</label>
+                <div class="col-sm-9">
+                  <select class="form-select form-control" id="driver" name="year">
+                    {% for year in car_years_choices %}
+                        <option value="{{year}}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Estado</label>
+                <div class="col-sm-9">
+                  <select class="form-select form-control" id="rol" name="rol">
+                    <option value="DIS">Disponible</option>
+                    <option value="MAN">En Mantenimiento</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <br/>
+          <a href="/trucks" class="btn btn-outline-dark m-1">Cancelar</a>&nbsp;&nbsp;&nbsp;
+          <button type="submit" class="btn btn-primary m-1">Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}  
