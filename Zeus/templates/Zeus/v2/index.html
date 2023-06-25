@@ -124,6 +124,8 @@ function calculateRoute(lat1, long1, lat2, long2){
 
   // get route from A to B
   calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino);
+  markersArray.push(origen);
+  markersArray.push(destino);
 }
 
 function clearOverlays() {

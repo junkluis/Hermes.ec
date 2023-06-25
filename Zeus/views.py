@@ -258,6 +258,18 @@ def new_truck(request):
         return render(request, 'Zeus/v2/new-truck.html', context)
 
 @login_required(login_url="/login")
+def new_order(request):
+    if request.method =='POST':
+        pass
+    else:
+        context = {
+            'action': 'new'
+        }
+        context['gkey'] = MAP_KEY
+        return render(request, 'Zeus/v2/new-order.html', context)
+
+
+@login_required(login_url="/login")
 def delete(request, object, key_id):
     if request.method =='POST':
         if request.POST["object"] == 'user':

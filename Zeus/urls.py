@@ -11,12 +11,13 @@ urlpatterns = [
     path("orders", views.orders, name="orders"),
     path("new_user", views.new_user, name="new_user"),
     path("new_truck", views.new_truck, name="new_truck"),
-    path("new_order", views.not_implemented, name="not_implemented"),
     path("delete/<str:object>/<int:key_id>", views.delete, name="delete"),
     path("edit/<str:object>/<int:key_id>", views.edit, name="edit"),
     path("reactivate/<str:object>/<int:key_id>", views.reactivate, name="reactivate"),
     path("view_orders/<str:order_id>", views.view_orders, name="view_orders"),
+    path("new_order", views.new_order, name="new_order"),
 
+    
 
     path("logout", views.logout_zeus, name="logout"),
     path("not_implemented", views.not_implemented, name="not_implemented"),

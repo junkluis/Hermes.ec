@@ -1,0 +1,234 @@
+{% extends "Zeus/base-v2.html" %}
+
+
+{% block main %}
+
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Nueva Orden</h4>
+        <form method="POST" class="post-form form-sample" autocomplete="off">
+          {% csrf_token %}
+          <p class="card-description">
+            Informacion personal
+          </p>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Cliente</label>
+                <div class="col-sm-9"> 
+                  <select class="form-select form-control" id="driver" name="driver">
+                    {% for driver in driver_list_json %}
+                        <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
+                    {% endfor %}
+                    <option value="00">None</option>
+                </select>           
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Conductor</label>
+                <div class="col-sm-9"> 
+                  <select class="form-select form-control" id="driver" name="driver">
+                    {% for driver in driver_list_json %}
+                        <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
+                    {% endfor %}
+                    <option value="00">None</option>
+                </select>           
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Descripcion del contenido</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Peso</label>
+                <div class="col-sm-5">
+                  <input type="number" min="0" {% if action == 'edit' %} value="{{ confirm_truck.capacity }}" {% endif %}  class="form-control" id="capacity" name="capacity" required="required" aria-describedby="emailHelp">
+                </div>
+                <div class="col-sm-4">
+                  <select class="form-select form-control" id="unit" name="unit">
+                    <option value="Kg">Kg</option>
+                    <option value="Lb">Lb</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><b>Origen</b></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><b>Destino</b></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button type="button" class="btn btn-secondary m-1" onclick="clearOverlays()">Limpiar Marcadores</button>
+              <button type="button" class="btn btn-primary m-1" onclick="calcularRuta()" >Calcular ruta</button>
+              <div class="form-group row">
+                <div class="col-sm-12">
+                  <div id="map" style="width:100%;height:500px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
+          <br/>
+          <br/>
+          <a href="/users" class="btn btn-outline-dark m-1">Cancelar</a>&nbsp;&nbsp;&nbsp;
+          <button type="submit" class="btn btn-primary m-1">Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}  
+
+
+
+
+{% block custom_script %}
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{gkey}}"></script>
+<script> 
+
+var map;
+var markerArray = [];
+
+function initMap() {
+  var pointA = new google.maps.LatLng(-2.1852634,-79.8914505)
+  var myOptions = {
+        zoom: 15,
+        center: pointA
+    }
+  map = new google.maps.Map(document.getElementById("map"), myOptions)
+  var markerA = new google.maps.Marker({
+        position: pointA,
+        title: "point A",
+        map: map,
+    })   
+    markerArray.push(markerA)
+}
+
+initMap();
+
+map.addListener('click', function(e) {
+    placeMarker(e.latLng, map);
+});
+
+function placeMarker(position, map) {
+  console.log(markerArray)
+  console.log(markerArray.length)
+  if (markerArray.length == 2){
+    console.log("eliminar el primero")
+    markerArray[0].setMap(null);
+    markerArray.shift()
+  }
+    var marker = new google.maps.Marker({
+        position: position,
+        map: map
+    });
+    map.panTo(position);
+    markerArray.push(marker)
+}
+
+
+function clearOverlays() {
+  if (markerArray) {
+    for (i in markerArray) {
+      markerArray[i].setMap(null);
+      markerArray.shift()
+    }
+  }
+}
+
+function calcularRuta(){
+  if(markerArray.length != 2){
+    window.alert('Se necesitan dos coordenadas')
+    return false;
+  }
+
+  originLat = markerArray[0].getPosition().lat();
+  originLng = markerArray[0].getPosition().lng();
+  destinationLat = markerArray[1].getPosition().lat();
+  destinationLng = markerArray[1].getPosition().lng();
+
+  calculateRoute(originLat, originLng, destinationLat, destinationLng)
+}
+
+
+function calculateRoute(lat1, long1, lat2, long2){
+  console.log(lat1, long1, lat2, long2)
+  clearOverlays();
+
+  var origen = new google.maps.LatLng(lat1, long1),
+    destino = new google.maps.LatLng(lat2, long2),
+    // Instantiate a directions service.
+    directionsService = new google.maps.DirectionsService,
+    directionsDisplay = new google.maps.DirectionsRenderer({
+        map: map
+    }),
+    marcadorOrigen = new google.maps.Marker({
+        position: origen,
+        title: "origen",
+        map: map,
+    }),
+    marcadorDestino = new google.maps.Marker({
+        position: origen,
+        title: "destino",
+        map: map
+    });
+
+    map.setOptions({ center: destino });
+
+    console.log(marcadorOrigen)
+    console.log(marcadorDestino)
+
+    markerArray.push(marcadorOrigen);
+    markerArray.push(marcadorDestino);
+
+  // get route from A to B
+  calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino);
+  markerArray.push(origen);
+  markerArray.push(destino);
+}
+
+function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
+    directionsService.route({
+        origin: pointA,
+        destination: pointB,
+        avoidTolls: true,
+        avoidHighways: false,
+        travelMode: google.maps.TravelMode.DRIVING
+    }, function (response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+        } else {
+            window.alert('Directions request failed due to ' + status);
+        }
+    });
+}
+
+</script>
+{% endblock %}  
