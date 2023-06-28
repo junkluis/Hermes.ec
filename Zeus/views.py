@@ -605,6 +605,9 @@ def settings(request):
     
     context['gkey'] = MAP_KEY
     context['locations'] = locations_json
-    context['tarifas'] = model_to_dict(tarifas)
+    try:
+        context['tarifas'] = model_to_dict(tarifas)
+    except:
+        context['tarifas'] = {}
     
     return render(request, 'Zeus/v2/settings.html', context)
