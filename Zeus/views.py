@@ -296,7 +296,6 @@ def new_order(request):
         client = User.objects.get(id=client_id)
         driver = User.objects.get(id=driver_id)
         camion = Truck.objects.filter(license=placa).first()
-        import pdb; pdb.set_trace()
 
         Order.objects.create(
             responsible=responsible,
