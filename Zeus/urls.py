@@ -16,6 +16,7 @@ urlpatterns = [
     path("reactivate/<str:object>/<int:key_id>", views.reactivate, name="reactivate"),
     path("view_orders/<str:order_id>", views.view_orders, name="view_orders"),
     path("new_order", views.new_order, name="new_order"),
+    path("settings", views.settings, name="settings"),
 
     
 

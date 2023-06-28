@@ -1,0 +1,215 @@
+{% extends "Zeus/base-v2.html" %}
+
+
+{% block custom_style %}
+
+{% endblock %}
+
+{% block main %}
+<h3>Destinos</h3>
+<hr>
+<div class="row">
+    <div class="col-lg-6 d-flex align-items-strech">
+        <div class="card w-100">
+            <div class="card-body">
+                <h4 class="card-title">Agregar Ubicacion</h4>
+                
+                <form method="POST" class="post-form">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" placeholder="nombre" name="nombre" required>
+                    <input type="hidden" class="form-control" name="action" id="action" value="add_location">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Ubicación</label>
+                    <input type="hidden" class="form-control" name="latitud"  id="latitud" value="0">
+                    <input type="hidden" class="form-control" name="longitud" id="longitud" value="0">
+                    <div id="googleMap" style="width:100%;height:400px;"></div>
+                  </div>
+                  <button type="submit" class="btn btn-primary mr-2">Guardar</button>
+                </form>
+              </div>
+        </div>
+      </div>
+    <div class="col-lg-6 d-flex align-items-strech">
+      <div class="card w-100">
+        <div class="card-body">
+          <div>
+            <div class="mb-3 mb-sm-0">
+                <div class="row alig n-items-start">
+                  <h5 class="card-title fw-semibold">Destinos disponibles</h5>
+                  <div class="row alig n-items-start"></div>
+                    <table  class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th> Nombre </th>
+                                <th> Acciones </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for location in locations %}
+                                <tr>
+                                    <th> {{location.nombre}} </th>
+                                    <th> 
+                                        <form method="POST" class="post-form">
+                                            {% csrf_token %}
+                                            <input type="hidden" class="form-control" name="action" id="action" value="delete_location">
+                                            <input type="hidden" class="form-control" name="location_id" id="location_id" value="{{ location.id }}">
+                                            <button type="submit" class="btn btn-inverse-danger btn-rounded btn-icon">
+                                            <i class="mdi mdi-delete-forever"></i>
+                                        </button>
+                                      </form>
+                                     </th>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+              <br/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
+<br><br><br><br>
+<h3>Tarifas</h3>
+<div></div>
+<hr>
+<div class="row">
+    <div class="col-lg-6 d-flex align-items-strech">
+        <div class="card w-100">
+            <div class="card-body">
+                <h4 class="card-title">Agregar Tarifas</h4>
+                <div>Las tarifas se calculan por Kilometro recorrido<br></div>
+                <hr>
+                <form method="POST" class="post-form">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label >Toneladas</label>
+                    <div class="row">
+                        <div class="col-4">
+                            <label >Hastas  6 Tn.</label>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.toneladas_seis %} value={{ tarifas.toneladas_seis }} {% else %}  value="0" {% endif %} class="form-control" id="tarifa6Tn" placeholder="" name="tarifa6Tn" required>
+                        </div>
+                        <div class="col-4">
+                            <label >6.01 Tn. - 8 Tn.</label>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.toneladas %} value={{ tarifas.toneladas }} {% else %}  value="0" {% endif %} class="form-control" id="tarifaTn" placeholder="" name="tarifaTn" required>
+                        </div>
+                        <div class="col-4">
+                            <label > Hasta 10 Tn.</label>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.toneladas_diez %} value={{ tarifas.toneladas_diez }} {% else %}  value="0" {% endif %} class="form-control" id="tarifa10Tn" placeholder="" name="tarifa10Tn" required>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Kilogramos</label>
+                    <div class="row">
+                        <div class="col-4">
+                            <label >Tarifa por 1 Kg.</label>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.kilogramos %} value={{ tarifas.kilogramos }} {% else %}  value="0" {% endif %} class="form-control" id="tarifaKg" placeholder="tarifaKg" name="tarifaKg" required>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label >Libras</label>
+                    <div class="row">
+                        <div class="col-4">
+                            <label >Tarifa por 1 Lb.</label>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.libras %} value={{ tarifas.libras }} {% else %}  value="0" {% endif %} class="form-control" id="tarifaLb" placeholder="tarifaLb" name="tarifaLb" required>
+                        </div>
+                    </div>
+                  </div>
+                    <input type="hidden" class="form-control" name="action" id="action" value="update_settings">
+                    <button type="submit" class="btn btn-primary mr-2">Actualizar</button>
+                  </form>
+
+              </div>
+        </div>
+      </div>
+
+</div>
+    
+
+{% endblock %}  
+
+{% block custom_script %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{gkey}}"></script>
+<script>
+var map;
+var markersArray = [];
+
+function initMap() {
+  var pointA = new google.maps.LatLng(-2.1852634,-79.8914505)
+  var myOptions = {
+        zoom: 15,
+        center: pointA
+    }
+  
+  map = new google.maps.Map(document.getElementById('googleMap'), myOptions)
+    // Instantiate a directions service.
+  var directionsService = new google.maps.DirectionsService
+  var directionsDisplay = new google.maps.DirectionsRenderer({
+        map: map
+    })
+  var markerA = new google.maps.Marker({
+        position: pointA,
+        title: "point A",
+        map: map,
+    })
+
+    markersArray.push(markerA);
+   
+}
+
+initMap();
+
+map.addListener('click', function(e) {
+    placeMarker(e.latLng, map);
+});
+
+
+function placeMarker(position, map) {
+    clearOverlays();
+
+    var marker = new google.maps.Marker({
+        position: position,
+        map: map
+    });
+
+    map.panTo(position);
+    markersArray.push(marker);
+
+    obtenerCoordenadas(marker);
+}
+
+function obtenerCoordenadas(marker){
+    lat = marker.getPosition().lat();
+    lng = marker.getPosition().lng();
+    console.log(lat, lng)
+
+    var latInput = document.getElementById("latitud");
+    var lngInput = document.getElementById("longitud");
+    
+    latInput.setAttribute('value', lat)
+    lngInput.setAttribute('value', lng)
+
+
+}
+
+
+function clearOverlays() {
+  if (markersArray) {
+    for (i in markersArray) {
+      
+      markersArray[i].setMap(null);
+    }
+  }
+}
+
+
+</script>
+
+{% endblock %}  

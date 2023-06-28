@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.contrib.auth.models import User, Group
 from .serializers import UserSerializer, GroupSerializer
-from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order
+from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order, Ubicacion
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes

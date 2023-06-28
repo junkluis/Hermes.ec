@@ -23,11 +23,9 @@
                 <table id="myTable" class="table table-hover">
                     <thead>
                         <tr>
-                            <th> ID </th>
-                            <th> </th>
-                            <th> Cliente </th>
                             <th> Camion </th>
                             <th> Ruta </th>
+                            <th> Precio </th>
                             <th> Estado </th>
                             <th> Actions </th>
                         </tr>
@@ -35,20 +33,22 @@
                     <tbody>
                         {% for order in order_list %}
                             <tr>
-                                <th>{{ order.id }}</th>
-                                <th>
-                                  <img 
-                                  {% if order.is_active is True %} 
-                                    src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Green_Light_Icon.svg"  title="ACTIVE"
-                                  {% else %}
-                                    src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Gray_Light_Icon.svg"  title="INACTIVE"
-                                  {% endif %}
-                                  alt="{{ order.is_active }}" width="20" >
-                                </th>
-                                <th>{{ order.client }}</th>
                                 <th>{{ order.truck }}</th>
                                 <th>{{ order.origin }} - {{ order.destination }}</th>
-                                <th>{{ order.status }}</th>
+                                <th> ${{ order.precio|floatformat:2 }} </th>
+                                <th>
+                                  {% if order.status == 'Pendiente' %}
+                                  <label class="badge badge-info">{{ order.status }}</label>
+                                  {% elif order.status == 'En Proceso' %}
+                                  <label class="badge badge-warning">{{ order.status }}</label>
+                                  {% elif order.status == 'Finalizado' %}
+                                  <label class="badge badge-success">{{ order.status }}</label>
+                                  {% elif order.status == 'Cancelado' %}
+                                  <label class="badge badge-danger">{{ order.status }}</label>
+                                  {% endif %}
+                                  
+                                  
+                                </th>
                                 <th>
                                   {% if order.is_active is True %} 
                                     <button type="submit" class="btn btn btn-outline-info" onclick="window.location.href='/view_orders/{{order.id}}'" title="Edit"><i class="mdi mdi-map"></i> </button> &nbsp;  

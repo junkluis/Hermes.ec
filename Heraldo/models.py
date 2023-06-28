@@ -35,7 +35,7 @@ class Truck(models.Model):
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     license = models.CharField(max_length=100)
-    capacity = models.DecimalField(null=True, blank=True, max_digits=6, decimal_places=2)
+    capacity = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
     measurement = models.CharField(
         max_length=2,
         choices=ROL_CHOICES_UNIT,
@@ -44,8 +44,8 @@ class Truck(models.Model):
     color = models.CharField(max_length=255)
     brand = models.CharField(max_length=255)
     year = models.CharField(max_length=255)
-    lat = models.DecimalField(null=True, blank=True, max_digits=6, decimal_places=2)
-    log = models.DecimalField(null=True, blank=True, max_digits=6, decimal_places=2)
+    lat = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    log = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
     is_active = models.BooleanField(default=True)
 
 class Order(models.Model):
@@ -69,6 +69,10 @@ class Order(models.Model):
     location_coord_lat = models.CharField(max_length=255, blank=True, null=True)
     location_coord_long = models.CharField(max_length=255, blank=True, null=True)
     location_update = models.DateTimeField(auto_now=True)
+    peso = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    tarifa = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    precio = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    distancia = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
     status = models.CharField(
         max_length=2,
         choices=ORDER_STATUS,
@@ -76,4 +80,16 @@ class Order(models.Model):
     )
     creation_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     is_active = models.BooleanField(default=True)
+
+class Ubicacion(models.Model):
+    nombre = models.CharField(max_length=250)
+    latitud = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    longitud = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+
+class Tarifas(models.Model):
+    toneladas_seis = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    toneladas = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    toneladas_diez = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    kilogramos = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    libras = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
 

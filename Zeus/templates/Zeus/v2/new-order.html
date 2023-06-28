@@ -15,27 +15,31 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Cliente</label>
+                <label class="col-sm-3 col-form-label"><b>Cliente</b></label>
                 <div class="col-sm-9"> 
-                  <select class="form-select form-control" id="driver" name="driver">
-                    {% for driver in driver_list_json %}
-                        <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
+                  <select class="form-select form-control" id="client" name="client">
+                    {% for client in client_list %}
+                        <option value="{{ client.id }}">{{ client.identificacion }} - {{ client.name }} {{ client.last_name }}</option>
                     {% endfor %}
-                    <option value="00">None</option>
+                    {% if client_list|length == 0 %}
+                     <option value="00">No hay Clientes activos</option>
+                    {% endif %}
                 </select>           
                 </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Conductor</label>
+                <label class="col-sm-3 col-form-label"><b>Conductor</b></label>
                 <div class="col-sm-9"> 
-                  <select class="form-select form-control" id="driver" name="driver">
-                    {% for driver in driver_list_json %}
-                        <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
+                  <select class="form-select form-control" id="driverInfo" name="driver">
+                    {% for driver in driver_list %}
+                        <option value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.identificacion }} - {{ driver.name }} {{ driver.last_name }}</option>
                     {% endfor %}
-                    <option value="00">None</option>
-                </select>           
+                    {% if driver_list|length == 0 %}
+                     <option value="00">No hay Conductores activos</option>
+                    {% endif %}
+                </select>
                 </div>
               </div>
             </div>
@@ -43,24 +47,44 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Descripcion del contenido</label>
+                <label class="col-sm-3 col-form-label"><b>Contenido</b></label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                  <input type="text" class="form-control"  class="form-control" id="contenido" name="contenido" required="required" aria-describedby="emailHelp">
                 </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Peso</label>
+                <label class="col-sm-3 col-form-label"><b>Camion asignado</b></label>
+                <div class="col-sm-9"> 
+                  <input type="text" readonly class="form-control"  class="form-control" id="camionAsignado" name="camionAsignado" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><b>Peso</b></label>
                 <div class="col-sm-5">
-                  <input type="number" min="0" {% if action == 'edit' %} value="{{ confirm_truck.capacity }}" {% endif %}  class="form-control" id="capacity" name="capacity" required="required" aria-describedby="emailHelp">
+                  <input type="number" min="0"   class="form-control" id="pesoValue" name="pesoValue" required="required" aria-describedby="emailHelp">
                 </div>
                 <div class="col-sm-4">
-                  <select class="form-select form-control" id="unit" name="unit">
+                  <select class="form-select form-control" id="unitSelect" name="unitSelect">
+                    <option value="To">T.</option>
                     <option value="Kg">Kg</option>
                     <option value="Lb">Lb</option>
                   </select>
                 </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><b>Tarifa Aplicada</b></label>
+                <div class="col-sm-9">
+                  <input type="text" readonly class="form-control" id="tarifaAplicada" name="tarifaAplicada" required="required" >
+                </div>
+
               </div>
             </div>
           </div>
@@ -69,7 +93,14 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label"><b>Origen</b></label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                  <select class="form-select form-control" id="originPoint" name="originPoint">
+                      {% for ubicacion in ubicaciones %}
+                          <option value="{{ ubicacion.latitud }};{{ ubicacion.longitud }};{{ubicacion.nombre}}">{{ ubicacion.nombre }}</option>
+                      {% endfor %}
+                      {% if driver_list|length == 0 %}
+                      <option value="00">No hay Conductores activos</option>
+                      {% endif %}
+                  </select>
                 </div>
               </div>
             </div>
@@ -77,17 +108,57 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label"><b>Destino</b></label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                  <select class="form-select form-control" id="destinoPoint" name="destinoPoint">
+                      {% for ubicacion in ubicaciones reversed %}
+                          <option value="{{ ubicacion.latitud }};{{ ubicacion.longitud }};{{ubicacion.nombre}}">{{ ubicacion.nombre }}</option>
+                      {% endfor %}
+                      {% if driver_list|length == 0 %}
+                      <option value="00">No hay Conductores activos</option>
+                      {% endif %}
+                  </select>
                 </div>
               </div>
             </div>
           </div>
           <div class="row">
+            <button type="button" onclick="calcularRuta()" class="btn btn-inverse-info btn-lg btn-block">
+              <i class="mdi mdi-map-marker"></i>                      
+              Calcular Ruta
+            </button>
+          </div>
+          <div style="text-align: center; padding: 10px;" id="loadingGif">
+            <img src="https://miro.medium.com/v2/resize:fit:720/1*CsJ05WEGfunYMLGfsT2sXA.gif" width="300px">
+          </div>
+          <div>
+            &nbsp;
+          </div>
+          <div>
+            &nbsp;
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><b>Distancia</b></label>
+                <div class="col-sm-9">
+                  <input type="text" readonly class="form-control" class="form-control" id="distanciaInput" name="distanciaInput" required="required" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><b>Precio</b></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" class="form-control" id="precioInput" name="precioInput" aria-describedby="emailHelp" >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
             <div class="col-md-12">
-              <button type="button" class="btn btn-secondary m-1" onclick="clearOverlays()">Limpiar Marcadores</button>
-              <button type="button" class="btn btn-primary m-1" onclick="calcularRuta()" >Calcular ruta</button>
               <div class="form-group row">
                 <div class="col-sm-12">
+                  <h5>Ruta</h5>
                   <div id="map" style="width:100%;height:500px;"></div>
                 </div>
               </div>
@@ -98,7 +169,7 @@
           <br/>
           <br/>
           <a href="/users" class="btn btn-outline-dark m-1">Cancelar</a>&nbsp;&nbsp;&nbsp;
-          <button type="submit" class="btn btn-primary m-1">Guardar</button>
+          <button type="submit" class="btn btn-primary m-1" id="generarBtn">Generar</button>
         </form>
       </div>
     </div>
@@ -111,7 +182,94 @@
 {% block custom_script %}
 
 <script src="https://maps.googleapis.com/maps/api/js?key={{gkey}}"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 <script> 
+
+
+$( document ).ready(function() {
+  $('#loadingGif').css('display', 'none');
+
+  var placa = $('#driverInfo').find(":selected").attr("data-truck")
+  if(placa === 'Sin asignar'){
+    $('#camionAsignado').css("font-color", "red");
+  } else {
+    $('#camionAsignado').css("font-color", "black");
+  }
+  $('#camionAsignado').val(placa)
+});
+
+$('#driverInfo').on('change', function() {
+  var placa = $('#driverInfo').find(":selected").attr("data-truck")
+  if(placa === 'Sin asignar'){
+    $('#camionAsignado').css("color", "red");
+  } else {
+    $('#camionAsignado').css("color", "black");
+  }
+  $('#camionAsignado').val(placa)
+});
+
+
+$('#pesoValue').on('change', function() {
+    calculateTarifa()
+})
+
+$('#unitSelect').on('change', function() {
+    calculateTarifa()
+})
+
+$('#distanciaInput').on('change', function() {
+    calculateTarifa()
+    console.log('Tarifa');
+})
+
+
+
+
+function calculateTarifa(){
+  tarifa = getTarifa();
+  
+  unit = $('#unitSelect').find(":selected").val();
+  peso = $('#pesoValue').val();
+  $('#tarifaAplicada').css("color", "black");
+  $('#generarBtn').attr("disabled", false);
+
+  if(unit === 'To'){
+    if(peso >= 0 && peso <= 6){
+      $('#tarifaAplicada').val((Math.round(tarifa['toneladas_seis'] * 100) / 100).toFixed(2))
+    } else if(peso > 6 && peso <= 8){
+      $('#tarifaAplicada').val((Math.round(tarifa['toneladas'] * 100) / 100).toFixed(2))
+    } else if( peso > 8 && peso <=10){
+      $('#tarifaAplicada').val((Math.round(tarifa['toneladas_diez'] * 100) / 100).toFixed(2))
+    } else {
+      $('#tarifaAplicada').css("color", "red");
+      $('#tarifaAplicada').val('Sin Capacidad');
+      $('#generarBtn').attr("disabled", true);
+    }
+    
+  } else if(unit === 'Kg'){
+    $('#tarifaAplicada').val((Math.round(tarifa['kilogramos'] * 100) / 100).toFixed(2))
+  } else if(unit === 'Lb'){
+    $('#tarifaAplicada').val((Math.round(tarifa['libras'] * 100) / 100).toFixed(2))
+  } else {
+    $('#tarifaAplicada').css("color", "red");
+    $('#tarifaAplicada').val('Sin Capacidad');
+    $('#generarBtn').attr("disabled", true);
+
+  }
+}
+
+
+function getTarifa(){
+  return {
+    'toneladas_seis': '{{ tarifas.toneladas_seis }}',
+    'toneladas': '{{ tarifas.toneladas }}',
+    'toneladas_diez': '{{ tarifas.toneladas_diez }}',
+    'kilogramos': '{{ tarifas.kilogramos }}',
+    'libras': '{{ tarifas.libras }}',
+  }
+}
+
 
 var map;
 var markerArray = [];
@@ -133,54 +291,84 @@ function initMap() {
 
 initMap();
 
-map.addListener('click', function(e) {
-    placeMarker(e.latLng, map);
-});
 
-function placeMarker(position, map) {
-  console.log(markerArray)
-  console.log(markerArray.length)
-  if (markerArray.length == 2){
-    console.log("eliminar el primero")
-    markerArray[0].setMap(null);
-    markerArray.shift()
-  }
-    var marker = new google.maps.Marker({
-        position: position,
-        map: map
-    });
-    map.panTo(position);
-    markerArray.push(marker)
-}
-
-
-function clearOverlays() {
-  if (markerArray) {
-    for (i in markerArray) {
-      markerArray[i].setMap(null);
-      markerArray.shift()
-    }
-  }
+function clearOverlays(markerArray) {
+  while(markerArray.length) { markerArray.pop().setMap(null); }
 }
 
 function calcularRuta(){
-  if(markerArray.length != 2){
-    window.alert('Se necesitan dos coordenadas')
-    return false;
+  // originPoint
+  // destinoPoint
+  initMap();
+
+  originPoint = $('#originPoint').find(":selected").val();
+  destinoPoint = $('#destinoPoint').find(":selected").val();
+
+  
+  if(originPoint === destinoPoint){
+    console.log('NO SE PUEDE ENVIAR A LA MISMA UBICACION');
+    return false
   }
 
-  originLat = markerArray[0].getPosition().lat();
-  originLng = markerArray[0].getPosition().lng();
-  destinationLat = markerArray[1].getPosition().lat();
-  destinationLng = markerArray[1].getPosition().lng();
+  origin_coord = originPoint.split(';');
+  destin_coord = destinoPoint.split(';');
 
+  originLat = parseFloat(origin_coord[0])
+  originLng = parseFloat(origin_coord[1])
+  destinationLat = parseFloat(destin_coord[0])
+  destinationLng = parseFloat(destin_coord[1])
   calculateRoute(originLat, originLng, destinationLat, destinationLng)
+  calculatePrice();
+
 }
 
+function calculatePrice(){
+  $('#loadingGif').css('display', 'block')
+  setTimeout(function () {
+    tarifa = getTarifa();
+    distancia = $('#distanciaInput').val()
+    
+    console.log(distancia);
+    $('#loadingGif').css('display', 'none');
+    tarifaAplicada = $('#tarifaAplicada').val()
+    console.log(tarifaAplicada);
+    if(tarifaAplicada == ''){
+      console.log('no se puede');
+      return false
+    }
+
+    tarifaAplicada = parseFloat(tarifaAplicada)
+    distancia = parseFloat(distancia)
+
+    unit = $('#unitSelect').find(":selected").val();
+    peso = $('#pesoValue').val();
+    
+    var precio = 0;
+    if(unit === 'To'){
+      precio = tarifaAplicada * distancia
+    } else if(unit === 'Kg'){
+      precio = tarifaAplicada * distancia * peso
+    } else if(unit === 'Lb'){
+      precio = tarifaAplicada * distancia * peso
+    } else {
+      precio = -1
+    }
+
+    precio = (Math.round(precio * 100) / 100).toFixed(2)
+    $('#precioInput').css("font-color", "black");
+    $('#generarBtn').attr("disabled", false);
+    if(isNaN(precio)){
+      $('#precioInput').css("font-color", "red");
+      precio = 'Sin Calcular';
+      $('#generarBtn').attr("disabled", true);
+    }
+
+    $('#precioInput').val(precio)
+    }, 1000);
+}
 
 function calculateRoute(lat1, long1, lat2, long2){
-  console.log(lat1, long1, lat2, long2)
-  clearOverlays();
+  clearOverlays(markerArray);
 
   var origen = new google.maps.LatLng(lat1, long1),
     destino = new google.maps.LatLng(lat2, long2),
@@ -202,19 +390,17 @@ function calculateRoute(lat1, long1, lat2, long2){
 
     map.setOptions({ center: destino });
 
-    console.log(marcadorOrigen)
-    console.log(marcadorDestino)
 
     markerArray.push(marcadorOrigen);
     markerArray.push(marcadorDestino);
 
   // get route from A to B
   calculateAndDisplayRoute(directionsService, directionsDisplay, origen, destino);
-  markerArray.push(origen);
-  markerArray.push(destino);
+
 }
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
+
     directionsService.route({
         origin: pointA,
         destination: pointB,
@@ -224,6 +410,9 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, 
     }, function (response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
+            var distancia = directionsDisplay.directions.routes[0].legs[0].distance;
+            var distanciaKm =  distancia['value'] / 1000
+            $('#distanciaInput').val(distanciaKm + ' Km')
         } else {
             window.alert('Directions request failed due to ' + status);
         }

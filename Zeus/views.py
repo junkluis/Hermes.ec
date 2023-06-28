@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
-from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order
+from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order, Ubicacion, Tarifas
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 
@@ -260,12 +260,120 @@ def new_truck(request):
 @login_required(login_url="/login")
 def new_order(request):
     if request.method =='POST':
-        pass
+        context = {}
+
+
+        print(request.POST)
+
+        '''
+        'client': ['26'],
+         'driver': ['13'],
+         'contenido': ['asdasdasdas'], 
+         'pesoValue': ['2'], 
+         'unitSelect': ['To'], 
+         'tarifaAplicada': ['8.50'], 
+         'originPoint': ['-2.28000000;-79.91000000;Puerto Marítimo de Guayaquil'], 
+         'destinoPoint': ['-2.18982293;-79.88768578;Parque Centenario'], 
+         'distanciaInput': ['11.81 Km'], 
+         'precioInput': ['100.39'
+        '''
+
+
+        client_id = request.POST['client']
+        driver_id = request.POST['driver']
+        contenido = request.POST['contenido']
+        origen = request.POST['originPoint'].split(';')
+        destino = request.POST['destinoPoint'].split(';')
+        precio = float(request.POST['precioInput'])
+        peso = float(request.POST['pesoValue'])
+        unit = request.POST['unitSelect']
+        tarifa = float(request.POST['tarifaAplicada'])
+        distancia = float(request.POST['distanciaInput'].split(' ')[0])
+        placa = request.POST['camionAsignado']
+        
+
+        responsible = User.objects.get(username = request.user.username)
+        client = User.objects.get(id=client_id)
+        driver = User.objects.get(id=driver_id)
+        camion = Truck.objects.filter(license=placa).first()
+        import pdb; pdb.set_trace()
+
+        Order.objects.create(
+            responsible=responsible,
+            driver=driver,
+            client=client,
+            truck=camion,
+            content=contenido,
+            origin=origen[2],
+            origin_coord_lat=origen[0],
+            origin_coord_long=origen[1],
+            destination=destino[2],
+            destination_coord_lat=destino[0],
+            destination_coord_long=destino[1],
+            location_coord_lat=origen[0],
+            location_coord_long=origen[1],
+            peso=peso,
+            tarifa=tarifa,
+            precio= precio,
+            distancia= distancia,
+        )
+        return redirect('orders')
     else:
+        user_list = User.objects.filter(is_active=True)
+        
+        client_list = []
+        driver_list = []
+
+        for user in user_list:
+            try:
+                rol = Rol.objects.get(user=user)
+            except Rol.DoesNotExist:
+                rol = None
+
+            if rol and rol.user_rol == 'DR':
+                driver_json = {
+                    'id': user.id,
+                    'name': user.first_name,
+                    'last_name': user.last_name,
+                    'identificacion': user.username
+                }
+                truck = Truck.objects.filter(user=user).first()
+                if truck:
+                    driver_json['placa'] = truck.license
+                else:
+                    driver_json['placa'] = 'Sin asignar'
+
+                driver_list.append(driver_json)
+
+                
+            
+            if rol and rol.user_rol == 'CL':
+                client_json = {
+                    'id': user.id,
+                    'name': user.first_name,
+                    'last_name': user.last_name,
+                    'identificacion': user.username
+                }
+                client_list.append(client_json)
+
+                
+        tarifas = Tarifas.objects.all().first()
+        ubicaciones = Ubicacion.objects.all()
+        ubicaciones_json = []
+
+        for ubicacion in ubicaciones:
+            ubicaciones_json.append(model_to_dict(ubicacion))
+            
+
         context = {
             'action': 'new'
         }
         context['gkey'] = MAP_KEY
+        context['client_list'] = client_list
+        context['driver_list'] = driver_list
+        context['tarifas'] = model_to_dict(tarifas)
+        context['ubicaciones'] = ubicaciones_json
+
         return render(request, 'Zeus/v2/new-order.html', context)
 
 
@@ -448,3 +556,55 @@ def donwload_truck(request):
         writer.writerow(truck.values())
 
     return response
+
+def settings(request):
+    context = {}
+
+    if request.method =='POST':
+        if request.POST["action"] == 'add_location':
+            new_location = Ubicacion.objects.create(
+                nombre=request.POST['nombre'],
+                latitud=float(request.POST['latitud']),
+                longitud =float(request.POST['longitud']),
+            )
+        
+        if request.POST["action"] == 'delete_location':
+            try:
+                Ubicacion.objects.get(id=request.POST['location_id']).delete()
+            except:
+                pass
+        
+        if request.POST["action"] == 'update_settings':
+            try:
+                Tarifas.objects.all().delete()
+                Tarifas.objects.create(
+                    toneladas_seis = request.POST['tarifa6Tn'],
+                    toneladas = request.POST['tarifaTn'],
+                    toneladas_diez = request.POST['tarifa10Tn'],
+                    kilogramos = request.POST['tarifaKg'],
+                    libras = request.POST['tarifaLb'],
+                )
+            except:
+                Tarifas.objects.all().delete()
+                Tarifas.objects.create(
+                    toneladas_seis = 0,
+                    toneladas = 0,
+                    toneladas_diez = 0,
+                    kilogramos = 0,
+                    libras = 0,
+                )
+
+
+    locations_json = []
+    locations = Ubicacion.objects.all()
+    for location in locations:
+        locations_json.append(model_to_dict(location))
+
+    tarifas = Tarifas.objects.last()
+    
+    
+    context['gkey'] = MAP_KEY
+    context['locations'] = locations_json
+    context['tarifas'] = model_to_dict(tarifas)
+    
+    return render(request, 'Zeus/v2/settings.html', context)

@@ -22,10 +22,7 @@
                 <table id="myTable" class="table table-hover">
                     <thead>
                         <tr>
-                            <th> ID </th>
-                            <th> </th>
-                            <th> Cliente </th>
-                            <th> Camion </th>
+                            <th> Camions </th>
                             <th> Ruta </th>
                             <th> Estado </th>
                             <th> Actions </th>
@@ -34,7 +31,6 @@
                     <tbody>
                         {% for order in order_list %}
                             <tr>
-                                <th>{{ order.id }}</th>
                                 <th>
                                   <img 
                                   {% if order.is_active is True %} 
@@ -44,7 +40,6 @@
                                   {% endif %}
                                   alt="{{ order.is_active }}" width="20" >
                                 </th>
-                                <th>{{ order.client }}</th>
                                 <th>{{ order.truck }}</th>
                                 <th>{{ order.origin }} - {{ order.destination }}</th>
                                 <th>{{ order.status }}</th>
