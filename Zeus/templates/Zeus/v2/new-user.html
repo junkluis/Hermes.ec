@@ -87,6 +87,10 @@
           </div>
           <br/>
           <br/>
+          {% if action == 'edit' %}
+            <input type="hidden" value="{{ confirm_user.id }}" class="form-control" id="user_id" name="user_id" >
+            <input type="hidden" value="user" class="form-control" id="object" name="object" >
+          {% endif %}
           <a href="/users" class="btn btn-outline-dark m-1">Cancelar</a>&nbsp;&nbsp;&nbsp;
           <button type="submit" class="btn btn-primary m-1">Guardar</button>
         </form>

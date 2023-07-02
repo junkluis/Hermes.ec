@@ -50,11 +50,16 @@
                                   
                                 </th>
                                 <th>
-                                  {% if order.is_active is True %} 
-                                    <button type="submit" class="btn btn btn-outline-info" onclick="window.location.href='/view_orders/{{order.id}}'" title="Edit"><i class="mdi mdi-map"></i> </button> &nbsp;  
-                                  {% else %}
-                                    <button type="submit" class="btn btn btn-light" onclick="window.location.href='/not_implemented'" title="Reactivar">Reactivar</button> &nbsp;
+                                  {% if order.status != 'Cancelado' %}
+                                  <button type="button" class="btn btn btn-outline-info" onclick="window.location.href='/view_orders/{{order.id}}'" title="Ruta"><i class="mdi mdi-map"></i> </button> &nbsp;  
                                   {% endif %}
+                                  {% if order.is_active is True %} 
+                                    
+                                    <button type="button" class="btn btn btn-outline-warning" onclick="window.location.href='/view_order_documents/{{order.id}}'" title="Informacion"><i class="mdi mdi-information"></i> </button> &nbsp;  
+                                  {% else %}
+                                    <button type="button" class="btn btn btn-light" onclick="window.location.href='/not_implemented'" title="Reactivar">Reactivar</button> &nbsp;
+                                  {% endif %}
+                                
                                     
                                 </th>
                             </tr>

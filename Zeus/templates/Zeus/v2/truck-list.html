@@ -37,19 +37,23 @@
                             <tr>
                                 <th>{{ truck.id }}</th>
                                 <th>
-                                  <img 
-                                  {% if truck.is_active is True %} 
-                                    src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Green_Light_Icon.svg"  title="ACTIVE"
+                                  {% if truck.status == 'Disponible' %} 
+                                    <img 
+                                    {% if truck.is_active is True %} 
+                                      src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Green_Light_Icon.svg"  title="ACTIVE"
+                                    {% else %}
+                                      src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Gray_Light_Icon.svg"  title="INACTIVE"
+                                    {% endif %}
+                                    alt="{{ truck.is_active }}" width="20" >
                                   {% else %}
-                                    src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Gray_Light_Icon.svg"  title="INACTIVE"
+                                  <label class="badge badge-warning">Mantenimiento</label>
                                   {% endif %}
-                                  alt="{{ truck.is_active }}" width="20" >
                                 </th>
                                 <th>{{ truck.driver }}</th>
                                 <th>{{ truck.capacity }}</th>
                                 <th>{{ truck.license }}</th>
                                 <th>{{ truck.brand }}</th>
-                                <th><div style="background-color:{{ truck.color }};">&nbsp</div> </th>
+                                <th><span style="background-color:{{ truck.color }};">&nbsp;&nbsp;</span><span> &nbsp;{{ truck.color_name|default_if_none:"" }}</span> </th>
                                 <th>
                                   {% if truck.is_active is True %} 
                                     <button type="submit" class="btn btn-outline-warning" onclick="window.location.href='/edit/truck/{{truck.id}}'" title="Edit"><i class="mdi mdi-grease-pencil"></i> </button> &nbsp;

@@ -1,0 +1,69 @@
+{% extends "Zeus/base-v2.html" %}
+
+
+{% block main %}
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-strech">
+      <div class="card w-100">
+        <div class="card-body">
+          <div>
+            <div class="mb-3 mb-sm-0">
+                <div class="row alig n-items-start">
+                  <h1 class=" display-3">Seguro que quieres Cancelar Orden # {{ order.id }}?</h5>
+                </div>
+              <br/>
+              {% if order.status == 'Pendiente' %}
+                    <form method="POST" class="post-form">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{order.id}}" name="order" />
+                        <button type="submit" class="btn btn btn-outline-danger" onclick="window.location.href='/cancelar/{{order.id}}'" title="Cancelar"><i class="mdi mdi-block-helper"></i> &nbsp;Cancelar Orden</button> &nbsp;  
+                    </form>
+                   
+                  {% endif %}
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="padding: 10px 0px;">
+    <div class="col-md-6 grid-margin ">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">Contenido</h3>
+          <div class="media">
+            
+            <div class="media-body">
+              <ul class="list-arrow">
+                  <li><b>Descripcion:</b> {{ order.content|default_if_none:"" }}</li>
+                  <li><b>Peso:</b>  {{ order.peso|default_if_none:""|floatformat:2 }} [{{ order.unidad|default_if_none:"" }}.]</li>
+                  <li><b>Precio:</b> $ {{ order.precio|default_if_none:""|floatformat:2 }}</li>
+                  <li><b>Tarifa: </b>$ {{ order.tarifa|default_if_none:""|floatformat:2 }} /Km </li>
+                </ul>
+            </div>
+            <i class="mdi mdi-package-variant icon-lg text-info d-flex align-self-center mr-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 grid-margin ">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Ruta</h4>
+          <div class="media">
+              <div class="media-body">
+                  <ul class="list-arrow">
+                      <li><b>Origen:</b> {{ order.origin|default_if_none:"" }}</li>
+                      <li><b>Destino:</b> {{ order.destination|default_if_none:"" }}</li>
+                      <li><b>Distancia:</b> {{ order.distancia|default_if_none:""|floatformat:2 }} [Km]</li>
+                      <li style="visibility: hidden;"></li>
+                    </ul>
+                </div>
+                <i class="mdi mdi-map icon-lg text-info d-flex align-self-center mr-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+{% endblock %}  

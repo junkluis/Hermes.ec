@@ -1,23 +1,30 @@
 {% extends "Zeus/base-v2.html" %}
 
+{% block custom_style %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+  li[aria-disabled="true"]{
+    text-decoration: line-through;
+  }
+</style>
+
+{% endblock %}
 
 {% block main %}
 
   <div class="col-12 grid-margin">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Nueva Orden</h4>
-        <form method="POST" class="post-form form-sample" autocomplete="off">
+        <h4 class="card-title"><i class="mdi mdi-package-variant"></i>   Nueva Orden</h4>
+        <form method="POST" class="post-form form-sample" autocomplete="off" enctype="multipart/form-data">
           {% csrf_token %}
-          <p class="card-description">
-            Informacion personal
-          </p>
+          <hr>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label"><b>Cliente</b></label>
                 <div class="col-sm-9"> 
-                  <select class="form-select form-control" id="client" name="client">
+                  <select class="form-select form-control" id="client" style="width: 100%" name="client">
                     {% for client in client_list %}
                         <option value="{{ client.id }}">{{ client.identificacion }} - {{ client.name }} {{ client.last_name }}</option>
                     {% endfor %}
@@ -32,13 +39,36 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label"><b>Conductor</b></label>
                 <div class="col-sm-9"> 
-                  <select class="form-select form-control" id="driverInfo" name="driver">
-                    {% for driver in driver_list %}
-                        <option value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.identificacion }} - {{ driver.name }} {{ driver.last_name }}</option>
-                    {% endfor %}
-                    {% if driver_list|length == 0 %}
-                     <option value="00">No hay Conductores activos</option>
+                  <select class="form-select form-control" id="driverInfo" style="width: 100%"  name="driver">
+                    {% if driver_list|length > 0 %}
+                      <optgroup label="Conductores disponibles">
+                      {% for driver in driver_list %}
+                        <option value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.identificacion }} - {{ driver.name }} {{ driver.last_name }}</option>    
+                      {% endfor %}
+                      </optgroup>
                     {% endif %}
+                    {% if inactive_driver|length > 0 %}
+                      <optgroup label="Conductores Inactivos">
+                      {% for driver in inactive_driver %}
+                        <option disabled="disabled" style="background-color: gray;" value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.identificacion }} - {{ driver.name }} {{ driver.last_name }}</option>    
+                      {% endfor %}
+                      </optgroup>
+                    {% endif %}
+                    {% if busy_driver|length > 0 %}
+                      <optgroup label="Conductor con Orden en proceso">
+                      {% for driver in busy_driver %}
+                        <option disabled="disabled" value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.identificacion }} - {{ driver.name }} {{ driver.last_name }}</option>    
+                      {% endfor %}
+                      </optgroup>
+                    {% endif %}
+                    {% if inactive_truck|length > 0 %}
+                      <optgroup label="Camiones en mantenimiento o sin asignar">
+                      {% for driver in inactive_truck %}
+                        <option disabled="disabled" value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.identificacion }} - {{ driver.name }} {{ driver.last_name }}</option>    
+                      {% endfor %}
+                      </optgroup>
+                    {% endif %}
+                
                 </select>
                 </div>
               </div>
@@ -49,7 +79,8 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label"><b>Contenido</b></label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control"  class="form-control" id="contenido" name="contenido" required="required" aria-describedby="emailHelp">
+                  <!-- input type="text" class="form-control"  class="form-control" id="contenido" name="contenido"  aria-describedby="emailHelp" -->
+                  <textarea class="form-control" id="contenido" name="contenido" required="required" rows="4"></textarea>
                 </div>
               </div>
             </div>
@@ -88,6 +119,30 @@
               </div>
             </div>
           </div>
+          <div>
+          <h4 class="card-title"> <i class="mdi mdi-package-variant"></i>Archivos de Orden</h4>
+        </div>
+          <hr>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><b>Guia de Remision (*)</b></label>
+                <div class="col-sm-9">
+                  <input type="file" class="form-control" id="guiaRemision" name="guiaRemision" required="required" accept="application/pdf">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><b>Archivos Legales</b></label>
+                <div class="col-sm-9">
+                  <input type="file" multiple class="form-control" id="archivosLegales" name="archivosLegales" accept="application/pdf">
+                </div>
+              </div>
+            </div>
+          </div>
+          <h4 class="card-title"><i class="mdi mdi-package-variant"></i> Ruta</h4>
+          <hr>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group row">
@@ -121,7 +176,7 @@
             </div>
           </div>
           <div class="row">
-            <button type="button" onclick="calcularRuta()" class="btn btn-inverse-info btn-lg btn-block">
+            <button type="button" style="    margin: 0px 10px;" onclick="calcularRuta()" class="btn btn-inverse-info btn-lg btn-block">
               <i class="mdi mdi-map-marker"></i>                      
               Calcular Ruta
             </button>
@@ -183,11 +238,19 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key={{gkey}}"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+
 
 <script> 
-
+var MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 $( document ).ready(function() {
+
+  $('#client').select2();
+  $('#driverInfo').select2();
+
+
   $('#loadingGif').css('display', 'none');
 
   var placa = $('#driverInfo').find(":selected").attr("data-truck")
@@ -196,7 +259,18 @@ $( document ).ready(function() {
   } else {
     $('#camionAsignado').css("font-color", "black");
   }
-  $('#camionAsignado').val(placa)
+  $('#camionAsignado').val(placa);
+
+  $('#guiaRemision').change(function() {
+      fileSize = this.files[0].size;
+      if (fileSize > MAX_FILE_SIZE) {
+          this.setCustomValidity("File must not exceed 5 MB!");
+          this.reportValidity();
+      } else {
+          this.setCustomValidity("");
+      }
+    });
+  
 });
 
 $('#driverInfo').on('change', function() {

@@ -2,6 +2,7 @@ from pyexpat import model
 from django.contrib.auth.models import User
 from django.db import models
 import datetime
+from db_file_storage.model_utils import delete_file, delete_file_if_needed
 
 
 class Rol(models.Model):
@@ -32,6 +33,7 @@ class Truck(models.Model):
     ROL_CHOICES_UNIT = [
         ('Kg', 'Kilogram'),
         ('Lb', 'Pound'),
+        ('Tn', 'Toneladas'),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     license = models.CharField(max_length=100)
@@ -46,7 +48,10 @@ class Truck(models.Model):
     year = models.CharField(max_length=255)
     lat = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
     log = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    color_name = models.CharField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=255, null=True, blank=True, default='Disponible')
     is_active = models.BooleanField(default=True)
+    creation_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
 class Order(models.Model):
     ORDER_STATUS = [
@@ -78,8 +83,15 @@ class Order(models.Model):
         choices=ORDER_STATUS,
         default='PD',
     )
+    unidad = models.CharField(max_length=10, blank=True, null=True)
     creation_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     is_active = models.BooleanField(default=True)
+
+class OrdersFile(models.Model):
+    orden = models.ForeignKey('Order', on_delete=models.CASCADE)
+    archivo = models.ForeignKey('Console', on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=250)
+
 
 class Ubicacion(models.Model):
     nombre = models.CharField(max_length=250)
@@ -93,3 +105,20 @@ class Tarifas(models.Model):
     kilogramos = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
     libras = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
 
+
+class ConsolePicture(models.Model):
+    bytes = models.TextField()
+    filename = models.CharField(max_length=255)
+    mimetype = models.CharField(max_length=50)
+
+class Console(models.Model):
+    name = models.CharField(max_length=100)
+    archivo = models.FileField(upload_to='Heraldo.ConsolePicture/bytes/filename/mimetype', blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        delete_file_if_needed(self, 'picture')
+        super(Console, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        super(Console, self).delete(*args, **kwargs)
+        delete_file(self, 'picture')

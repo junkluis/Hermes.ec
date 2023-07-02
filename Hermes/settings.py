@@ -103,6 +103,8 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+DEFAULT_FILE_STORAGE = 'db_file_storage.storage.DatabaseFileStorage'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

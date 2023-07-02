@@ -1,0 +1,157 @@
+{% extends "Zeus/base-v2.html" %}
+
+
+{% block custom_style %}
+<style>
+.mapholder{
+    height: 500px;
+    width: 100%;
+}
+
+#map {
+    height: 100%;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-strech">
+      <div class="card w-100">
+        <div class="card-body">
+          <div>
+                <div class="row alig n-items-start">
+                  <h3>Informacion de Ordern N# {{ order.id|stringformat:"05d" }}</h3>
+                  
+                </div>
+                <div class="row">
+                <div class="row alig n-items-start col-6">
+                  <h1 class="display-4" >Estado: 
+                      {% if order.status == 'Pendiente' %}
+                      <label class="badge badge-info" style="font-size: 20px;">{{ order.status }}</label>
+                      {% elif order.status == 'En Proceso' %}
+                      <label class="badge badge-warning" style="font-size: 20px;">{{ order.status }}</label>
+                      {% elif order.status == 'Finalizado' %}
+                        <label class="badge badge-success" style="font-size: 20px;">{{ order.status }}</label>
+                      {% elif order.status == 'Cancelado' %}
+                      <label class="badge badge-danger" style="font-size: 20px;">{{ order.status }}</label>
+                      {% endif %}
+                  
+                  </h1>
+                </div>
+                <div class=" col-6" style="text-align: end;">
+                  {% if order.status == 'Pendiente' %}
+                   <button type="button" class="btn btn btn-outline-danger" onclick="window.location.href='/cancelar/{{order.id}}'" title="Cancelar"><i class="mdi mdi-block-helper"></i> &nbsp;Cancelar Orden</button> &nbsp;  
+                  {% endif %}
+                </div>
+              </div>
+                  
+                
+              <br/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="padding: 10px 0px;">
+  <div class="col-md-6 grid-margin ">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">Contenido</h3>
+        <div class="media">
+          
+          <div class="media-body">
+            <ul class="list-arrow">
+                <li><b>Descripcion:</b> {{ order.content|default_if_none:"" }}</li>
+                <li><b>Peso:</b>  {{ order.peso|default_if_none:""|floatformat:2 }} [{{ order.unidad|default_if_none:"" }}.]</li>
+                <li><b>Precio:</b> $ {{ order.precio|default_if_none:""|floatformat:2 }}</li>
+                <li><b>Tarifa: </b>$ {{ order.tarifa|default_if_none:""|floatformat:2 }} /Km </li>
+              </ul>
+          </div>
+          <i class="mdi mdi-package-variant icon-lg text-info d-flex align-self-center mr-3"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 grid-margin ">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Ruta</h4>
+        <div class="media">
+            <div class="media-body">
+                <ul class="list-arrow">
+                    <li><b>Origen:</b> {{ order.origin|default_if_none:"" }}</li>
+                    <li><b>Destino:</b> {{ order.destination|default_if_none:"" }}</li>
+                    <li><b>Distancia:</b> {{ order.distancia|default_if_none:""|floatformat:2 }} [Km]</li>
+                    <li style="visibility: hidden;"></li>
+                  </ul>
+              </div>
+              <i class="mdi mdi-map icon-lg text-info d-flex align-self-center mr-3"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 grid-margin ">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Destinatario</h4>
+        <div class="media">
+            <div class="media-body">
+                <ul class="list-arrow">
+                    <li><b>Nombre:</b> {{ order.client.first_name|default_if_none:"" }}  {{ order.client.last_name|default_if_none:"" }}</li>
+                    <li><b>Identificacion:</b> {{ order.client.username|default_if_none:"" }}</li>
+                    <li style="visibility: hidden;"></li>
+                  </ul>
+              </div>
+              <i class="mdi mdi-account-star icon-lg text-info d-flex align-self-center mr-3"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 grid-margin ">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Conductor</h4>
+        <div class="media">
+            <div class="media-body">
+                <ul class="list-arrow">
+                    <li><b>Conductor:</b> {{ order.driver.first_name|default_if_none:"" }}  {{ order.driver.last_name|default_if_none:"" }}</li>
+                    <li><b>Identificacion:</b> {{ order.driver.username|default_if_none:"" }}</li>
+                    <li><b>Placa vehiculo:</b> {{ order.truck.license|default_if_none:"" }}</li>
+                  </ul>
+              </div>
+              <i class="mdi mdi-truck icon-lg text-info d-flex align-self-center mr-3"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12 grid-margin ">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Archivos</h4>
+        <div class="media">
+            <div class="media-body">
+
+                {% for archivo in order.files %}
+                    {% if archivo.name == 'guiaRemision' %}
+                        <a type="button" class="btn btn-inverse-primary" target="_blank" href="/files/get/?name={{archivo.archivo}}" style="margin: 2px;"> <b>Guia de Remision </b></a>
+                    {% else %}
+                        <a type="button" class="btn btn-link" target="_blank" href="/files/get/?name={{archivo.archivo}}" style="margin: 2px;"> <b> {{ archivo.name|cut:'.pdf' }} </b></a>
+                    {% endif %}
+                {% endfor %}
+                
+              </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  
+
+{% endblock %}  
+
+{% block custom_script %}
+
+
+{% endblock %}  

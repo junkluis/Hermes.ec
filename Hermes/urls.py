@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Zeus.urls')),
     path('heraldo/', include('Heraldo.urls')),
+    path('files/', include('db_file_storage.urls')),
+
 ]

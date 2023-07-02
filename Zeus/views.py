@@ -7,9 +7,10 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
-from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order, Ubicacion, Tarifas
+from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order, Ubicacion, Tarifas, OrdersFile, Console
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
+import datetime
 
 
 from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY
@@ -79,7 +80,7 @@ def dashboard(request):
 @login_required(login_url="/login")
 def users(request):
     context = {}
-    user_list = User.objects.all()
+    user_list = User.objects.filter().order_by('-date_joined')
     user_list_json = []
     for user in user_list:
         try:
@@ -97,6 +98,7 @@ def users(request):
             'username': user.username,
             'is_active': user.is_active,
         })
+        
     context['user_list'] = user_list_json
     return render(request, 'Zeus/v2/user-list.html', context)
 
@@ -157,7 +159,7 @@ def new_user(request):
 @login_required(login_url="/login")
 def trucks(request):
     context = {}
-    truck_list = Truck.objects.all()
+    truck_list = Truck.objects.filter().order_by('-creation_date')
     truck_list_json = []
     for truck in truck_list:
         driver = truck.user
@@ -168,19 +170,22 @@ def trucks(request):
         truck_list_json.append({
             'id': truck.id,
             'driver': driver_name,
-            'capacity': str(truck.capacity) + ' ' +truck.measurement, 
+            'capacity': f'{truck.capacity:.2f}' + ' ' +truck.measurement, 
             'brand': truck.brand,
             'color': truck.color,
+            'color_name': truck.color_name,
+            'status': truck.status,
             'license': truck.license,
             'is_active': truck.is_active
         })
+        print(truck_list_json)
     context['truck_list'] = truck_list_json
     return render(request, 'Zeus/v2/truck-list.html', context)
 
 @login_required(login_url="/login")
 def orders(request):
     context = {}
-    order_list = Order.objects.all()
+    order_list = Order.objects.filter().order_by('-creation_date')
     order_list_json = []
     for order in order_list:
         order_json = model_to_dict(order)
@@ -219,8 +224,6 @@ def view_orders(request, order_id):
 def new_truck(request):
     if request.method =='POST':
         driver_id = request.POST["driver"]
-
-        
         try:
             driver = User.objects.get(pk=driver_id)
         except Rol.DoesNotExist:
@@ -231,6 +234,8 @@ def new_truck(request):
             capacity = request.POST["capacity"],
             measurement = request.POST["unit"],
             color = request.POST["color"],
+            color_name = request.POST["colorName"],
+            status = request.POST["estado"],
             brand = request.POST["brand"],
             year = request.POST["year"],
         )
@@ -297,7 +302,7 @@ def new_order(request):
         driver = User.objects.get(id=driver_id)
         camion = Truck.objects.filter(license=placa).first()
 
-        Order.objects.create(
+        new_order = Order.objects.create(
             responsible=responsible,
             driver=driver,
             client=client,
@@ -315,13 +320,47 @@ def new_order(request):
             tarifa=tarifa,
             precio= precio,
             distancia= distancia,
+            unidad=unit,
         )
+        
+        guia_remision = request.FILES['guiaRemision']
+        archivos_legales = request.FILES.getlist('archivosLegales')
+
+        guia_remision_file = Console.objects.create(
+            name= guia_remision.field_name,
+            archivo= guia_remision,
+        )
+
+        OrdersFile.objects.create(
+            orden=new_order,
+            archivo=guia_remision_file,
+            nombre='Guia de Remision para orden - ' + str(new_order.id)
+        )
+
+        for archivo in archivos_legales:
+            archivo_raw = Console.objects.create(
+                name= archivo._name,
+                archivo=archivo,
+            )
+            OrdersFile.objects.create(
+                orden=new_order,
+                archivo=archivo_raw,
+                nombre=archivo._name
+            )
+
         return redirect('orders')
+
+
     else:
-        user_list = User.objects.filter(is_active=True)
+        user_list = User.objects.filter()
         
         client_list = []
         driver_list = []
+        
+        inactive_driver = []
+        busy_driver = []
+        inactive_truck = []
+
 
         for user in user_list:
             try:
@@ -337,23 +376,34 @@ def new_order(request):
                     'identificacion': user.username
                 }
                 truck = Truck.objects.filter(user=user).first()
+                orders = Order.objects.filter(driver=user, status='EP').first()
+
                 if truck:
                     driver_json['placa'] = truck.license
                 else:
                     driver_json['placa'] = 'Sin asignar'
 
-                driver_list.append(driver_json)
-
+                if not user.is_active:
+                    inactive_driver.append(driver_json)
+                elif driver_json['placa'] == 'Sin asignar':
+                    inactive_truck.append(driver_json)
+                elif truck.status != 'Disponible':
+                    inactive_truck.append(driver_json)
+                elif orders is not None:
+                    busy_driver.append(driver_json)
+                else:
+                    driver_list.append(driver_json)
                 
             
             if rol and rol.user_rol == 'CL':
-                client_json = {
-                    'id': user.id,
-                    'name': user.first_name,
-                    'last_name': user.last_name,
-                    'identificacion': user.username
-                }
-                client_list.append(client_json)
+                if user.is_active:
+                    client_json = {
+                        'id': user.id,
+                        'name': user.first_name,
+                        'last_name': user.last_name,
+                        'identificacion': user.username
+                    }
+                    client_list.append(client_json)
 
                 
         tarifas = Tarifas.objects.all().first()
@@ -362,7 +412,7 @@ def new_order(request):
 
         for ubicacion in ubicaciones:
             ubicaciones_json.append(model_to_dict(ubicacion))
-            
+
 
         context = {
             'action': 'new'
@@ -370,6 +420,9 @@ def new_order(request):
         context['gkey'] = MAP_KEY
         context['client_list'] = client_list
         context['driver_list'] = driver_list
+        context['inactive_driver'] = inactive_driver
+        context['busy_driver'] = busy_driver
+        context['inactive_truck'] = inactive_truck
         context['tarifas'] = model_to_dict(tarifas)
         context['ubicaciones'] = ubicaciones_json
 
@@ -519,6 +572,7 @@ def edit(request, object, key_id):
 
             return render(request, 'Zeus/v2/new-truck.html', context)
 
+@login_required(login_url="/login")
 def not_implemented(request):
     return render(request, 'Zeus/v2/working.html', {})
 
@@ -556,6 +610,7 @@ def donwload_truck(request):
 
     return response
 
+@login_required(login_url="/login")
 def settings(request):
     context = {}
 
@@ -610,3 +665,103 @@ def settings(request):
         context['tarifas'] = {}
     
     return render(request, 'Zeus/v2/settings.html', context)
+
+
+
+@login_required(login_url="/login")
+def view_order_documents(request, order_id):
+    context = {}
+    try:
+        order = Order.objects.get(id=order_id)
+        context['order'] = model_to_dict(order)
+        context['order']['status'] = ORDER_STATUS[order.status]
+        context['order']['client'] = model_to_dict(order.client)
+        context['order']['driver'] = model_to_dict(order.driver)
+        context['order']['truck'] = model_to_dict(order.truck)
+
+        archivos = OrdersFile.objects.filter(orden=order)
+        file_names = []
+        for archivo in archivos:
+
+            file_names.append(model_to_dict(archivo.archivo))
+        
+        context['order']['files'] = file_names
+
+    except Exception as e:
+        context['error_message'] = 'No se pudo obtener la orden ' + str(order_id)
+        print('-'*10)
+        print(e)
+        return render(request, 'Zeus/v2/error-page.html', context)
+        print('-'*10)
+
+    return render(request, 'Zeus/v2/order-file.html', context)
+
+@login_required(login_url="/login")
+def cancel_order(request, order_id):
+    context = {}
+    if request.method =='POST':
+        try:
+            order_id = request.POST["order"]
+            order = Order.objects.get(id=order_id)
+            order.status = 'CN'
+            order.save()
+        except:
+            context['error_message'] = 'No se pudo obtener la orden ' + str(order_id)
+            return render(request, 'Zeus/v2/error-page.html', context)
+        
+        return redirect('orders')
+    else:
+        order = Order.objects.get(id=order_id)
+        context['order'] = model_to_dict(order)
+        context['order']['status'] = ORDER_STATUS[order.status]
+        return render(request, 'Zeus/v2/cancel-order.html', context)
+
+
+@login_required(login_url="/login")
+def reportes(request):
+    context = {}
+    if request.method =='POST':
+        reporte_date = request.POST["daterange"]
+        dates = reporte_date.split('-')
+        start = dates[0].replace(' ','')
+        end = dates[1].replace(' ','')
+
+    else:
+        now = datetime.date.today()
+        start = now.strftime("%m/%d/%Y")
+        end = now.strftime("%m/%d/%Y")
+    
+    context['start'] = start
+    context['end'] = end
+
+    start_date = datetime.datetime.strptime(start, "%m/%d/%Y")
+    end_date = datetime.datetime.strptime(end, "%m/%d/%Y")
+
+
+    revenue = {}
+
+    list_orders = Order.objects.filter(creation_date__gte=start_date, creation_date__lte=end_date)
+    ordenes_pendientes = list_orders.filter(status='PD')
+    ordenes_proceso = list_orders.filter(status='EP')
+    ordenes_finalizado = list_orders.filter(status='FN')
+    ordenes_cancelado = list_orders.filter(status='CN')
+
+    context['ordenes_pendientes'] = ordenes_pendientes
+    context['ordenes_proceso'] = ordenes_proceso
+    context['ordenes_finalizado'] = ordenes_finalizado
+    context['ordenes_cancelado'] = ordenes_cancelado
+
+    for order in list_orders:
+        day_date = str(order.creation_date.date())
+        if order.precio:
+            if day_date in revenue.keys():
+                revenue[day_date] = revenue[day_date] + order.precio
+            else:
+                revenue[day_date] = order.precio
+
+    context['fechas'] = revenue.keys()
+    context['valores'] = revenue.values()
+    print(context['fechas'])
+    print(context['valores'])
+
+    return render(request, 'Zeus/v2/reportes.html', context)

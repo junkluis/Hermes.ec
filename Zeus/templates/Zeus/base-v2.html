@@ -21,6 +21,13 @@
     
   {% block custom_style %}
   {% endblock %}
+  <style>
+    a[class^="paginate_button"] {
+      font-size: 0.875rem;
+      line-height: 1;
+      font-weight: 400;
+    }
+  </style>
 </head>
 <body>
   <div class="container-scroller d-flex">
@@ -60,7 +67,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <a class="nav-link" href="/reportes">
             <i class="mdi mdi-chart-areaspline menu-icon"></i>
             <span class="menu-title">Reporte</span>
           </a>
@@ -110,7 +117,7 @@
               
             </li>
           </ul>
-          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center text-primary" type="button" data-toggle="offcanvas">
             <span class="mdi mdi-menu"></span>
           </button>
         </div>
@@ -143,6 +150,9 @@
   <!-- Plugin js for this page-->
   <script src="{% static 'js/Chart.min.js' %}"></script>
   <!-- End plugin js for this page-->
+
+  <script src="{% static 'js/chart.js' %}"></script>
+
   <!-- inject:js -->
   <script src="{% static 'js/off-canvas.js' %}"></script>
   <script src="{% static 'js/hoverable-collapse.js' %}"></script>
@@ -162,8 +172,13 @@
   <script>
     $(document).ready( function () {
       $('#myTable').DataTable();
+      $('a[class^="paginate_button"]').addClass('btn btn-light');
   } );
   </script> 
+
+
+{% block custom_final_script %}
+{% endblock %}
 
 </body>
 

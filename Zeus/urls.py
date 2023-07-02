@@ -15,6 +15,9 @@ urlpatterns = [
     path("edit/<str:object>/<int:key_id>", views.edit, name="edit"),
     path("reactivate/<str:object>/<int:key_id>", views.reactivate, name="reactivate"),
     path("view_orders/<str:order_id>", views.view_orders, name="view_orders"),
+    path("cancelar/<str:order_id>", views.cancel_order, name="cancel_order"),
+
+    path("view_order_documents/<str:order_id>", views.view_order_documents, name="view_order_documents"),
     path("new_order", views.new_order, name="new_order"),
     path("settings", views.settings, name="settings"),
 
@@ -29,6 +32,8 @@ urlpatterns = [
 
 
     path("dashboard_v2", views.dashboard_v2, name="dashboard_v2"),
+
+    path("reportes", views.reportes, name="reportes"),
     
     
 ]
