@@ -15,6 +15,7 @@ import os
 import django_heroku
 import dj_database_url
 from dotenv import load_dotenv
+from datetime import timedelta
 
 # Virtual env
 load_dotenv()
@@ -99,6 +100,9 @@ REST_FRAMEWORK = {
     ),
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=100),
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
