@@ -19,7 +19,7 @@ urlpatterns = [
 
     path("view_order_documents/<str:order_id>", views.view_order_documents, name="view_order_documents"),
     path("new_order", views.new_order, name="new_order"),
-    path("settings", views.settings, name="settings"),
+    path("hermes_settings", views.hermes_settings, name="hermes_settings"),
 
     
 
@@ -34,6 +34,10 @@ urlpatterns = [
     path("dashboard_v2", views.dashboard_v2, name="dashboard_v2"),
 
     path("reportes", views.reportes, name="reportes"),
+
+    path("recuperar_contrasena", views.recuperar_contrasena, name="recuperar_contrasena"),
+
+    
     
     
 ]

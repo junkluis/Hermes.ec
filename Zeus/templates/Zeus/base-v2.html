@@ -27,6 +27,12 @@
       line-height: 1;
       font-weight: 400;
     }
+
+    .navbar-transpflor{
+      background: url('{% static 'img/logo-grande.jpeg' %}') center center no-repeat;
+      background-size: cover;
+      transition: background 0.25s ease;
+    }
   </style>
 </head>
 <body>
@@ -93,7 +99,7 @@
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
       <!-- partial:./partials/_navbar.html -->
-      <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row">
+      <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row navbar-transpflor" >
         <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
             <span class="mdi mdi-menu"></span>

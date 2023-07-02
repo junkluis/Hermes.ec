@@ -122,3 +122,10 @@ class Console(models.Model):
     def delete(self, *args, **kwargs):
         super(Console, self).delete(*args, **kwargs)
         delete_file(self, 'picture')
+    
+class changePasswordToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    creation_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    cp_token = models.CharField(max_length=255)
+
+    

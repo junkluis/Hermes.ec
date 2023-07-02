@@ -7,13 +7,14 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
-from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order, Ubicacion, Tarifas, OrdersFile, Console
+from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order, Ubicacion, Tarifas, OrdersFile, Console, changePasswordToken
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 import datetime
+import hashlib
 
 
-from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY
+from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY, USER_MAIL,  USER_MAIL_PASSWORD
 
 
 def index(request):
@@ -144,7 +145,7 @@ def new_user(request):
         new_user.set_password(password)
         new_user.save()
 
-        if rol is not 'None':
+        if rol != 'None':
             Rol.objects.create(
                 user=new_user,
                 user_rol=rol
@@ -611,7 +612,7 @@ def donwload_truck(request):
     return response
 
 @login_required(login_url="/login")
-def settings(request):
+def hermes_settings(request):
     context = {}
 
     if request.method =='POST':
@@ -765,3 +766,38 @@ def reportes(request):
     print(context['valores'])
 
     return render(request, 'Zeus/v2/reportes.html', context)
+
+
+
+def recuperar_contrasena(request):
+    context = {}
+    if request.method =='POST':
+        email = request.POST["email"]
+        edit_user = User.objects.filter(email=email).first()
+
+        if edit_user is None:
+            context['error'] = True
+            context['error_message'] = 'El usuario no se encuentra en la base de datos'
+            return render(request, 'Zeus/v2/recuperar-contrasena.html', context)
+
+        
+        context['success'] = True
+        context['success_message'] = 'Se envio un correo con un link para el cambio de contrasena'
+
+        secret_token = hashlib.new('sha256')
+        secret_token.update(edit_user.username.encode('utf-8'))
+
+        change_password = changePasswordToken.objects.create(
+            user=edit_user,
+            cp_token=secret_token.hexdigest()
+
+        )
+        
+        context['method'] = 'POST'
+
+    else:
+
+        context['method'] = 'get maybe'
+
+    return render(request, 'Zeus/v2/recuperar-contrasena.html', context)
+

@@ -23,4 +23,6 @@ ORDER_STATUS = {
 
 
 MAP_KEY = os.environ.get('MAP_KEY')
+USER_MAIL = os.environ.get('USER_MAIL')
+USER_MAIL_PASSWORD = os.environ.get('USER_MAIL_PASSWORD')
 TRANSPORTES_FLOR = (-2.1852634,-79.8914505)
