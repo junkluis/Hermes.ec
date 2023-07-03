@@ -36,6 +36,7 @@ urlpatterns = [
     path("reportes", views.reportes, name="reportes"),
 
     path("recuperar_contrasena", views.recuperar_contrasena, name="recuperar_contrasena"),
+    path("cambio-clave/<str:token>/", views.cambio_clave, name="cambio_clave"),
 
     
     

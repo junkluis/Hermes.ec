@@ -13,8 +13,10 @@ from django.forms.models import model_to_dict
 import datetime
 import hashlib
 
+from django.core.mail import EmailMessage
 
-from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY, USER_MAIL,  USER_MAIL_PASSWORD
+
+from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY, USER_MAIL,  USER_MAIL_PASSWORD, SITE_URL
 
 
 def index(request):
@@ -790,8 +792,17 @@ def recuperar_contrasena(request):
         change_password = changePasswordToken.objects.create(
             user=edit_user,
             cp_token=secret_token.hexdigest()
-
         )
+        url = f'{SITE_URL}/cambio-clave/{change_password.cp_token}/'
+        message = 'Para cambiar su contrasena de click en el siguiente enlace: \n' + url
+
+        try:
+            email = EmailMessage('Cambio de contrasena', message, to=[email])
+            email.send()
+        except:
+            context['error'] = True
+            context['error_message'] = 'No se pudo enviar el correo a ' + email
+            return render(request, 'Zeus/v2/recuperar-contrasena.html', context)
         
         context['method'] = 'POST'
 
@@ -801,3 +812,30 @@ def recuperar_contrasena(request):
 
     return render(request, 'Zeus/v2/recuperar-contrasena.html', context)
 
+
+def cambio_clave(request, token):
+    context = {}
+
+    if request.method =='POST':
+        token = request.POST["token"]
+        contrasena = request.POST["contrasena"]
+        change_password = changePasswordToken.objects.filter(cp_token=token).first()
+
+        edit_user = change_password.user
+        edit_user.set_password(contrasena)
+        edit_user.save()
+
+        change_password = changePasswordToken.objects.filter(cp_token=token).delete()
+        return redirect('login')
+
+    else:
+        try:
+            change_password = changePasswordToken.objects.filter(cp_token=token).first()
+            context['token'] = change_password.cp_token
+        except Exception as e:
+            print(e)
+            context['error'] = True
+            context['error_message'] = "El token ha expirado"
+
+    return render(request, 'Zeus/v2/cambio-clave.html', context)
+    
