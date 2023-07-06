@@ -5,6 +5,7 @@ from Heraldo.models import *
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import AllowAny
 from django.forms.models import model_to_dict
 from datetime import datetime
 import base64
@@ -430,4 +431,28 @@ def informar_imprevisto(request):
         return Response(context)
     
     context['Message'] = 'Formulario de incidente'
+    return Response(context)
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([])
+@permission_classes([])
+def ubicacion(request, id):
+    '''
+    {
+    "hora": "23:05:10",
+    "fecha": "05/07/2023",
+    "observacion": "Hola mi amigo",
+    "order_id": 32
+    }
+    '''
+    context = {}
+    try:
+        order = Order.objects.get(id=id)
+        context['lat'] = order.location_coord_lat
+        context['lng'] = order.location_coord_long
+    except Exception as e:
+        context['error'] = str(e)
+    
+    context['msj'] = 'ok'
     return Response(context)

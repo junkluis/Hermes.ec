@@ -30,7 +30,8 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Placa</label>
                 <div class="col-sm-9">
-                  <input type="text" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" required="required" aria-describedby="emailHelp">
+                  <input type="text" pattern="[A-Z]{3}[0-9]{3,}" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" required="required" aria-describedby="emailHelp">
+                  <small>Formato: 3 letras y 3 o mas numeros, Ejemplo: GYE123</small>
                 </div>
               </div>
             </div>

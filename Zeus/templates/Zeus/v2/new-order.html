@@ -488,7 +488,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, 
             var distanciaKm =  distancia['value'] / 1000
             $('#distanciaInput').val(distanciaKm + ' Km')
         } else {
-            window.alert('Directions request failed due to ' + status);
+          window.alert('Actualmente no se puede encontrar una ruta en la locacion del conductor');
         }
     });
 }

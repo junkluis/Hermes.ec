@@ -84,8 +84,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, 
         if (status == google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
         } else {
-            window.alert('Directions request failed due to ' + status);
-        }
+          window.alert('Actualmente no se puede encontrar una ruta en la locacion del conductor');
     });
 }
 

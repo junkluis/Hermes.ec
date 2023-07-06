@@ -177,7 +177,9 @@
 
   <script>
     $(document).ready( function () {
-      $('#myTable').DataTable();
+      $('#myTable').DataTable({
+        "order": []
+      });
       $('a[class^="paginate_button"]').addClass('btn btn-light');
   } );
   </script> 

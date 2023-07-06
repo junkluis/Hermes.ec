@@ -27,5 +27,7 @@ urlpatterns = [
 
     path('informar_imprevisto', views.informar_imprevisto, name='informar_imprevisto'), 
     path('confirmar_entrega', views.confirmar_entrega, name='confirmar_entrega'),
+    path('ubicacion/<int:id>', views.ubicacion, name='ubicacion'),
+    
 
 ]

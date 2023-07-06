@@ -75,6 +75,7 @@ def dashboard(request):
         orden_json['location'] = (orden.location_coord_lat, orden.location_coord_long)
         orden_json['destination'] = (orden.destination_coord_lat, orden.destination_coord_long)
         orden_json['status'] = orden.status
+        orden_json['id'] = orden.id
         ordenes_json.append(orden_json)
 
     context['ordenes'] = ordenes_json
@@ -83,7 +84,7 @@ def dashboard(request):
 @login_required(login_url="/login")
 def users(request):
     context = {}
-    user_list = User.objects.filter().order_by('-date_joined')
+    user_list = User.objects.filter().order_by('date_joined')
     user_list_json = []
     for user in user_list:
         try:
@@ -100,8 +101,9 @@ def users(request):
             'user_rol': user.user_rol,
             'username': user.username,
             'is_active': user.is_active,
+            'date_joined': user.date_joined,
         })
-        
+    
     context['user_list'] = user_list_json
     return render(request, 'Zeus/v2/user-list.html', context)
 
@@ -122,9 +124,10 @@ def new_user(request):
         if len(user_exist) > 0:
             error_list.append('La Identificación ya fue usada')
         
-        password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
-        if re.match(password_pattern, password) is None:
-            error_list.append('La contraseña debe contener al menos 8 caracteres, una minúscula, una mayúscula y un número')
+        if password is not None:
+            password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
+            if re.match(password_pattern, password) is None:
+                error_list.append('La contraseña debe contener al menos 8 caracteres, una minúscula, una mayúscula y un número')
         
         if len(error_list) > 0:
             context['error'] = True
@@ -133,7 +136,7 @@ def new_user(request):
                 'username': identification,
                 'first_name': name,
                 'last_name': last_name,
-                'last_name': email,
+                'email': email,
             }
             context['action'] = 'edit'
             return render(request, 'Zeus/v2/new-user.html', context)
@@ -144,8 +147,10 @@ def new_user(request):
             last_name=last_name,
             email=email
         )
-        new_user.set_password(password)
-        new_user.save()
+
+        if password is not None:
+            new_user.set_password(password)
+            new_user.save()
 
         if rol != 'None':
             Rol.objects.create(
@@ -162,7 +167,7 @@ def new_user(request):
 @login_required(login_url="/login")
 def trucks(request):
     context = {}
-    truck_list = Truck.objects.filter().order_by('-creation_date')
+    truck_list = Truck.objects.filter().order_by('creation_date')
     truck_list_json = []
     for truck in truck_list:
         driver = truck.user
@@ -188,7 +193,7 @@ def trucks(request):
 @login_required(login_url="/login")
 def orders(request):
     context = {}
-    order_list = Order.objects.filter().order_by('-creation_date')
+    order_list = Order.objects.filter().order_by('creation_date').reverse()
     order_list_json = []
     for order in order_list:
         order_json = model_to_dict(order)
