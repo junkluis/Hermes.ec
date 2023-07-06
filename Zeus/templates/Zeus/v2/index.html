@@ -141,7 +141,7 @@ function callCurrentLocation(){
   selectedOrder = $('#selectedOrder').val()
   console.log(selectedOrder);
   $.ajax({
-        url: "http://hermes-ec.herokuapp.com/heraldo/ubicacion/"+selectedOrder,
+        url: "https://hermes-ec.herokuapp.com/heraldo/ubicacion/"+selectedOrder,
     }).done(function( data ) {
       const image = "https://cdn.iconscout.com/icon/premium/png-64-thumb/car-1991-997072.png?f=webp";
       remove_previous = markersArray.pop();
