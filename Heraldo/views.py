@@ -1,11 +1,15 @@
 from django.http import HttpResponse
 from django.contrib.auth.models import User, Group
 from .serializers import UserSerializer, GroupSerializer
-from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order, Ubicacion
+from Heraldo.models import *
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.forms.models import model_to_dict
+from datetime import datetime
+import base64
+from django.core.files import File
+import os
 
 from Zeus.constants import USER_ROL
 
@@ -305,4 +309,125 @@ def order_location(request):
         return Response(context)
     
     context['Message'] = 'Actualiza la ubicacion de la Orden'
+    return Response(context)
+
+
+@api_view(['GET', 'POST'])
+def confirmar_entrega(request):
+    '''
+    {
+    "hora": "23:05:10",
+    "fecha": "05/07/2023",
+    "observacion": "Hola mi amigo",
+    "order_id": 32,
+    "entregado_a": "entregado_a",
+    "nombre_imagen": "prueba2",
+    "tipo_imagen": "jpg",
+    "foto_bytes_base64":""
+    }
+    '''
+    context = {}
+    if request.method == 'POST':
+        hora = request.data.get('hora')
+        fecha = request.data.get('fecha')
+        observacion = request.data.get('observacion')
+        order_id = request.data.get('order_id')
+        entregado_a = request.data.get('entregado_a')
+        nombre_imagen = request.data.get('nombre_imagen')
+        tipo_imagen = request.data.get('tipo_imagen')
+        foto_bytes = request.data.get('foto_bytes_base64')
+        
+        try:
+        
+            foto_file_name = f'{nombre_imagen}-{order_id}.{tipo_imagen}'
+            foto_file_name.replace('/', '')
+            with open(foto_file_name, 'wb') as file:
+                file.write(base64.b64decode((foto_bytes)))
+
+            with open(foto_file_name, 'rb') as file:
+                image_order = Console.objects.create(
+                    name=f'{nombre_imagen}.{tipo_imagen}',
+                    archivo=File(file)
+                )
+            os.remove(foto_file_name)
+
+        except Exception as e:
+            image_order = None
+            context['image_error'] = True
+            context['image_trace'] = str(e)
+
+        try:
+            fecha_entrega_str = str(fecha) + ' ' + str(hora)
+            fecha_entrega = datetime.strptime(fecha_entrega_str, '%m/%d/%y %H:%M:%S')
+        except:
+            fecha_entrega = datetime.now()
+
+
+        try:
+            order_form = Order.objects.get(id=int(order_id))
+            
+            Formulario.objects.create(
+                orden = order_form,
+                fecha = fecha_entrega,
+                observacion = str(observacion),
+                foto = image_order,
+                entregado_a = entregado_a,
+                tipo = 'Confirmacion',
+            )
+            context['error'] = False
+            context['msj'] = 'Formulario creado con exito'
+
+        except Exception as e:
+            context['error'] = True
+            context['trace'] = str(e)
+
+        return Response(context)
+    
+    context['Message'] = 'Formulario de confirmacion de entrega'
+    return Response(context)
+
+@api_view(['GET', 'POST'])
+def informar_imprevisto(request):
+    '''
+    {
+    "hora": "23:05:10",
+    "fecha": "05/07/2023",
+    "observacion": "Hola mi amigo",
+    "order_id": 32
+    }
+    '''
+    context = {}
+    if request.method == 'POST':
+        hora = request.data.get('hora')
+        fecha = request.data.get('fecha')
+        observacion = request.data.get('observacion')
+        order_id = request.data.get('order_id')
+
+        try:
+            fecha_entrega_str = str(fecha) + ' ' + str(hora)
+            fecha_entrega = datetime.strptime(fecha_entrega_str, '%m/%d/%y %H:%M:%S')
+        except:
+            fecha_entrega = datetime.now()
+
+
+        try:
+            order_form = Order.objects.get(id=int(order_id))
+            Formulario.objects.create(
+                orden = order_form,
+                fecha = fecha_entrega,
+                observacion = str(observacion),
+                foto = None,
+                entregado_a = None,
+                tipo = 'Imprevisto',
+            )
+            context['error'] = False
+            context['msj'] = 'Formulario creado con exito'
+
+        except Exception as e:
+            context['error'] = True
+            context['trace'] = str(e)
+
+        return Response(context)
+    
+    context['Message'] = 'Formulario de incidente'
     return Response(context)

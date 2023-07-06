@@ -128,4 +128,21 @@ class changePasswordToken(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     cp_token = models.CharField(max_length=255)
 
+
+class Formulario(models.Model):
+    TYPE_CHOICES = [
+        ('Imprevisto', 'Reporte de Imprevisto'),
+        ('Confirmacion', 'Confirmacion de entrega'),
+    ]
+    orden = models.ForeignKey('Order', on_delete=models.CASCADE)
+    fecha = models.DateTimeField(blank=True, null=True)
+    observacion = models.CharField(max_length=225)
+    foto = models.ForeignKey('Console', on_delete=models.CASCADE, blank=True, null=True)
+    entregado_a = models.CharField(max_length=225, blank=True, null=True)
+    tipo =  models.CharField(
+        max_length=12,
+        choices=TYPE_CHOICES,
+        default='Confirmacion',
+    )
+
     

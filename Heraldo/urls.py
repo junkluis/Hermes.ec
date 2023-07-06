@@ -24,5 +24,10 @@ urlpatterns = [
     path('update_order', views.update_order, name='update_order'), 
     path('update_truck_location', views.update_truck_location, name='update_truck_location'),
     path('order_location', views.order_location, name='order_location'), 
+
+    path('informar_imprevisto', views.informar_imprevisto, name='informar_imprevisto'), 
+    path('confirmar_entrega', views.confirmar_entrega, name='confirmar_entrega'),
+
+    
     
 ]
