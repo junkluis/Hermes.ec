@@ -25,8 +25,7 @@
                   <h5 class="card-title fw-semibold">Orden</h5>
                 </div>
               <br/>
-              <div id="googleMap" style="width:100%;height:400px;"></div>
-
+              <div id="googleMap" style="width:100%;height:1000px;"></div>
             </div>
           </div>
         </div>
@@ -48,7 +47,7 @@ function initMap() {
   var pointA = new google.maps.LatLng({{ current_location.0 }} , {{ current_location.1 }}),
     pointB = new google.maps.LatLng({{ destination_location.0 }} , {{ destination_location.1 }}),
     myOptions = {
-        zoom: 15,
+        zoom: 5,
         center: pointA
     },
     map = new google.maps.Map(document.getElementById('googleMap'), myOptions),
@@ -85,6 +84,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, 
             directionsDisplay.setDirections(response);
         } else {
           window.alert('Actualmente no se puede encontrar una ruta en la locacion del conductor');
+        }
     });
 }
 

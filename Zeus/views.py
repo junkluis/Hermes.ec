@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
-from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order, Ubicacion, Tarifas, OrdersFile, Console, changePasswordToken
+from Heraldo.models import Rol, Driver, DriverStatus, Truck, Order, Ubicacion, Tarifas, OrdersFile, Console, changePasswordToken, Formulario
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 import datetime
@@ -123,8 +123,8 @@ def new_user(request):
         user_exist = User.objects.filter(username=identification)
         if len(user_exist) > 0:
             error_list.append('La Identificación ya fue usada')
-        
-        if password is not None:
+
+        if password != None and password != '':
             password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
             if re.match(password_pattern, password) is None:
                 error_list.append('La contraseña debe contener al menos 8 caracteres, una minúscula, una mayúscula y un número')
@@ -186,14 +186,13 @@ def trucks(request):
             'license': truck.license,
             'is_active': truck.is_active
         })
-        print(truck_list_json)
     context['truck_list'] = truck_list_json
     return render(request, 'Zeus/v2/truck-list.html', context)
 
 @login_required(login_url="/login")
 def orders(request):
     context = {}
-    order_list = Order.objects.filter().order_by('creation_date').reverse()
+    order_list = Order.objects.filter(status__in=['EP', 'PD']).order_by('creation_date').reverse()
     order_list_json = []
     for order in order_list:
         order_json = model_to_dict(order)
@@ -205,6 +204,7 @@ def orders(request):
         order_list_json.append(order_json)
     
     context['order_list'] = order_list_json
+    context['view_title'] = 'Ordenes En Proceso o Pendientes'
     return render(request, 'Zeus/v2/order-list.html', context)
 
 @login_required(login_url="/login")
@@ -234,8 +234,9 @@ def new_truck(request):
         driver_id = request.POST["driver"]
         try:
             driver = User.objects.get(pk=driver_id)
-        except Rol.DoesNotExist:
+        except:
             driver = None
+
         Truck.objects.create(
             user = driver,
             license = request.POST["license"],
@@ -276,7 +277,6 @@ def new_order(request):
         context = {}
 
 
-        print(request.POST)
 
         '''
         'client': ['26'],
@@ -497,9 +497,10 @@ def edit(request, object, key_id):
             rol = request.POST["rol"]
 
             error_list = []
-            password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
-            if re.match(password_pattern, password) is None:
-                error_list.append('La contraseña debe contener al menos 8 caracteres, una minúscula, una mayúscula y un número')
+            if password != None and password != '':
+                password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
+                if re.match(password_pattern, password) is None:
+                    error_list.append('La contraseña debe contener al menos 8 caracteres, una minúscula, una mayúscula y un número')
             
             if len(error_list) > 0:
                 context['error'] = True
@@ -508,7 +509,7 @@ def edit(request, object, key_id):
                     'username': identification,
                     'first_name': name,
                     'last_name': last_name,
-                    'last_name': email,
+                    'email': email,
                 }
                 context['action'] = 'edit'
                 return render(request, 'Zeus/v2/new-user.html', context)
@@ -759,20 +760,198 @@ def reportes(request):
     context['ordenes_finalizado'] = ordenes_finalizado
     context['ordenes_cancelado'] = ordenes_cancelado
 
+    total_revenue = 0
+    total_distance = 0
+    total_ordenes_finalizadas = 0
+
+    list_orders_json = []
     for order in list_orders:
+        list_orders_json.append(model_to_dict(order))
         day_date = str(order.creation_date.date())
-        if order.precio:
-            if day_date in revenue.keys():
-                revenue[day_date] = revenue[day_date] + order.precio
-            else:
-                revenue[day_date] = order.precio
+        if order.status == 'FN':
+            if order.precio:
+                if day_date in revenue.keys():
+                    revenue[day_date] = revenue[day_date] + order.precio
+                else:
+                    revenue[day_date] = order.precio
+                
+                total_revenue += order.precio
+                total_distance += order.distancia
+                total_ordenes_finalizadas += 1
+    
+
 
     context['fechas'] = revenue.keys()
     context['valores'] = revenue.values()
-    print(context['fechas'])
-    print(context['valores'])
+    context['order_list'] = list_orders_json
+
+    context['total_revenue'] = float("{:.2f}".format(total_revenue))
+    context['total_distance'] = float("{:.2f}".format(total_distance))
+    context['total_ordenes_finalizadas'] = total_ordenes_finalizadas
+
 
     return render(request, 'Zeus/v2/reportes.html', context)
+
+@login_required(login_url="/login")
+def reporte_vehiculos(request):
+    context = {}
+
+    camiones = Truck.objects.all()
+    camiones_disponibles = []
+    camiones_mantenimiento = []
+    camiones_inactivos = []
+
+    for camion in camiones:
+        camion_json = model_to_dict(camion)
+        if camion.user:
+            camion_json['user'] = model_to_dict(camion.user)
+        
+
+        if camion.is_active == False:
+            camiones_inactivos.append(camion_json)
+        else:
+            if camion.status == 'Disponible':
+                camiones_disponibles.append(camion_json)
+            elif camion.status == 'En Mantenimiento':
+                camiones_mantenimiento.append(camion_json)
+
+    context['camiones_disponibles'] = camiones_disponibles
+    context['camiones_mantenimiento'] = camiones_mantenimiento
+    context['camiones_inactivos'] = camiones_inactivos
+    
+    return render(request, 'Zeus/v2/reporte-vehiculos.html', context)
+
+
+@login_required(login_url="/login")
+def reporte_conductores(request):
+    context = {}
+    if request.method =='POST':
+        reporte_date = request.POST["daterange"]
+        driver = request.POST["driver"]
+        dates = reporte_date.split('-')
+        start = dates[0].replace(' ','')
+        end = dates[1].replace(' ','')
+
+    else:
+        now = datetime.date.today()
+        start = now.strftime("%m/%d/%Y")
+        end = now.strftime("%m/%d/%Y")
+        driver = '00'
+
+    list_active_drivers = []
+    list_inactive_drivers = []
+    selected_user = None
+
+    usuarios = User.objects.all()
+    for user in usuarios:
+        rol = Rol.objects.filter(user=user, user_rol='DR').first()
+        if rol:
+            if rol.user.is_active:
+                list_active_drivers.append(model_to_dict(rol.user))
+            else:
+                list_inactive_drivers.append(model_to_dict(rol.user))
+
+                
+    if driver != '00':
+        selected_user = User.objects.filter(id=int(driver)).first()
+    
+    
+    context['start'] = start
+    context['end'] = end
+
+    start_date = datetime.datetime.strptime(start, "%m/%d/%Y")
+    end_date = datetime.datetime.strptime(end, "%m/%d/%Y")
+
+    resume_drivers = []
+    if selected_user:
+        selected_user_json =model_to_dict(selected_user)
+        list_orders = Order.objects.filter(creation_date__gte=start_date, creation_date__lte=end_date, driver=selected_user)
+        ordenes_pendientes = len(list_orders.filter(status='PD'))
+        ordenes_finalizado = len(list_orders.filter(status='FN'))
+        ordenes_cancelado = len(list_orders.filter(status='CN'))
+        ordenes_proceso = len(list_orders.filter(status='EP'))
+
+        conductor_info = {
+            'estado': selected_user_json['is_active'],
+            'nombre': selected_user_json['first_name'] + ' ' + selected_user_json['last_name'],
+            'ordenes_proceso': ordenes_proceso,
+            'ordenes_pendientes': ordenes_pendientes,
+            'ordenes_finalizado': ordenes_finalizado,
+            'ordenes_cancelado': ordenes_cancelado,
+        }
+        resume_drivers.append(conductor_info)
+
+    else:
+        for conductor in list_active_drivers+list_inactive_drivers:
+            user = User.objects.get(id=conductor['id'])
+            list_orders = Order.objects.filter(creation_date__gte=start_date, creation_date__lte=end_date, driver=user)
+            ordenes_pendientes = len(list_orders.filter(status='PD'))
+            ordenes_finalizado = len(list_orders.filter(status='FN'))
+            ordenes_cancelado = len(list_orders.filter(status='CN'))
+            ordenes_proceso = len(list_orders.filter(status='EP'))
+
+            conductor_info = {
+                'estado': conductor['is_active'],
+                'nombre': conductor['first_name'] + ' ' + conductor['last_name'],
+                'ordenes_proceso': ordenes_proceso,
+                'ordenes_pendientes': ordenes_pendientes,
+                'ordenes_finalizado': ordenes_finalizado,
+                'ordenes_cancelado': ordenes_cancelado,
+            }
+            resume_drivers.append(conductor_info)
+            
+
+    if selected_user:
+        list_orders = Order.objects.filter(creation_date__gte=start_date, creation_date__lte=end_date, driver=selected_user)
+    else:
+        list_orders = Order.objects.filter(creation_date__gte=start_date, creation_date__lte=end_date)
+
+    ordenes_pendientes = list_orders.filter(status='PD')
+    ordenes_proceso = list_orders.filter(status='EP')
+    ordenes_finalizado = list_orders.filter(status='FN')
+    ordenes_cancelado = list_orders.filter(status='CN')
+
+    context['ordenes_pendientes'] = ordenes_pendientes
+    context['ordenes_proceso'] = ordenes_proceso
+    context['ordenes_finalizado'] = ordenes_finalizado
+    context['ordenes_cancelado'] = ordenes_cancelado
+
+    revenue={}
+
+    total_revenue = 0
+    total_distance = 0
+    total_ordenes_finalizadas = 0
+
+    list_orders_json = []
+    for order in list_orders:
+        list_orders_json.append(model_to_dict(order))
+        day_date = str(order.creation_date.date())
+        if order.status == 'FN':
+            if order.precio:
+                if day_date in revenue.keys():
+                    revenue[day_date] = revenue[day_date] + order.precio
+                else:
+                    revenue[day_date] = order.precio
+                
+                total_revenue += order.precio
+                total_distance += order.distancia
+                total_ordenes_finalizadas += 1
+    
+
+    context['fechas'] = revenue.keys()
+    context['valores'] = revenue.values()
+    context['order_list'] = list_orders_json
+
+    context['total_revenue'] = float("{:.2f}".format(total_revenue))
+    context['total_distance'] = float("{:.2f}".format(total_distance))
+    context['total_ordenes_finalizadas'] = total_ordenes_finalizadas
+
+    context['list_active_drivers'] = list_active_drivers
+    context['list_inactive_drivers'] = list_inactive_drivers
+    context['resume_drivers'] = resume_drivers
+
+
+    return render(request, 'Zeus/v2/reporte-conductores.html', context)
 
 
 
@@ -843,4 +1022,38 @@ def cambio_clave(request, token):
             context['error_message'] = "El token ha expirado"
 
     return render(request, 'Zeus/v2/cambio-clave.html', context)
+    
+
+@login_required(login_url="/login")
+def ordenes_completas(request):
+    context = {}
+    order_list = Order.objects.filter(status__in=['FN', 'CN']).order_by('creation_date').reverse()
+    order_list_json = []
+    for order in order_list:
+        order_json = model_to_dict(order)
+        order_json['client'] = order.client.first_name + ' ' + order.client.last_name
+        order_json['admin'] = order.responsible.first_name + ' ' + order.responsible.last_name
+        order_json['driver'] = order.driver.first_name + ' ' + order.driver.last_name
+        order_json['truck'] = order.truck.brand + ' - ' + order.truck.license
+        order_json['status'] = ORDER_STATUS[order.status]
+        order_list_json.append(order_json)
+    
+    context['view_title'] = 'Ordenes Finalizadas o Canceladas'
+    context['order_list'] = order_list_json
+    return render(request, 'Zeus/v2/order-list.html', context)
+
+@login_required(login_url="/login")
+def ver_formulario(request, order_id):
+    context = {}
+
+    formulario = Formulario.objects.filter(orden=order_id).first()
+    formulario_json = None
+    if formulario:
+        formulario_json = model_to_dict(formulario)
+        formulario_json['foto'] = model_to_dict(formulario.foto)
+    
+    context['formulario'] = formulario_json
+    print(formulario_json)
+
+    return render(request, 'Zeus/v2/ver-formulario.html', context)
     

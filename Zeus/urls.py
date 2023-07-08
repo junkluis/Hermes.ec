@@ -38,6 +38,15 @@ urlpatterns = [
     path("recuperar_contrasena", views.recuperar_contrasena, name="recuperar_contrasena"),
     path("cambio-clave/<str:token>/", views.cambio_clave, name="cambio_clave"),
 
+    path("ordenes_completas", views.ordenes_completas, name="ordenes_completas"),
+
+    path("reporte_vehiculos", views.reporte_vehiculos, name="reporte_vehiculos"),
+    path("reporte_conductores", views.reporte_conductores, name="reporte_conductores"),
+
+    path("ver_formulario/<str:order_id>", views.ver_formulario, name="ver_formulario"),
+
+    
+
     
     
     

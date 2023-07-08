@@ -1,0 +1,304 @@
+{% extends "Zeus/base-v2.html" %}
+
+
+{% block custom_style %}
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+
+  .icon_margin{
+    margin: 10px;
+  }
+
+</style>
+{% endblock %}
+
+
+{% block main %}
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-strech">
+      <div class="card w-100">
+        <div class="card-body">
+          <div>
+            <div class="mb-3 mb-sm-0">
+                <div class="row alig n-items-start">
+                  <h1 class=" display-4">Reporte de Conductores</h1>
+                </div>
+                <div class="row alig n-items-start">
+                    
+                    
+                  </div>
+              <br/>
+              <form method="POST" class="post-form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Rango de Fechas</label>
+                        <input  type="text" name="daterange" value="{{start}} - {{end}}" /> 
+                        
+                      </div>
+                      <div class="form-group row" style="display: block;">
+                        <label class="col-sm-2 col-form-label">Conductor</label>
+                        <select class="form-select form-control" id="driverInfo" style="width: 50%"  name="driver">
+                            <optgroup >
+                                <option value="00" selected >SELECCIONAR TODOS</option>
+                            </optgroup>
+                            {% if list_active_drivers|length > 0 %}
+                            <optgroup label="Conductores Activos">
+                                {% for driver in list_active_drivers %}
+                                    <option value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.first_name }} {{ driver.last_name }}</option>    
+                                {% endfor %}
+                            </optgroup>
+                            {% endif %}
+
+                            {% if list_inactive_drivers|length > 0 %}
+                            <optgroup label="Conductores Inactivos">
+                                {% for driver in list_inactive_drivers %}
+                                    <option value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.first_name }} {{ driver.last_name }}</option>    
+                                {% endfor %}
+                            </optgroup>
+                            {% endif %}
+                            
+                        </select>
+                      </div>
+                      &nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-primary col-sm-2">Generar Reporte</button>
+                        
+
+                      
+                      
+                    </div>
+                  </div>
+                  
+            </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<br>
+{% if resume_drivers|length > 0 %}
+<div class="row" id="reporte">
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+          <h4 class="card-title">Conductores:</h4>
+          <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th> Estado </th>
+                    <th> Nombre </th>
+                    <th> Pedidos En Proceso </th>
+                    <th> Pedidos Pendientes </th>
+                    <th> Pedidos Finalizados </th>
+                    <th> Pedidos Cancelados </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for driver in resume_drivers %}
+                    <tr>
+                        <th>
+                            {% if driver.estado %}
+                            <label class="badge badge-success">Activo</label>
+                            {% else %}
+                            <label class="badge badge-secondary">Inactivo</label>
+                            {% endif %}
+                        </th>
+                        <th>{{ driver.nombre  }}</th>
+                        <th>{{ driver.ordenes_proceso }}</th>
+                        <th>{{ driver.ordenes_pendientes }}</th>
+                        <th>{{ driver.ordenes_finalizado }}</th>
+                        <th>{{ driver.ordenes_cancelado }}</th>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+  <div class="row" id="reporte">
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+        <h4>Ordenes del Conductor</h4>
+        <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th> Codigo </th>
+                  <th> Contenido </th>
+                  <th> Ruta </th>
+                  <th> Precio </th>
+                  <th> Peso </th>
+                  <th> Tarifa </th>
+                  <th> Distancia </th>
+                  <th> Estado </th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for order in order_list %}
+                  <tr>
+                      <th>{{ order.id | stringformat:"05d"  }}</th>
+                      <th>{{ order.content  }}</th>
+                      <th>{{ order.origin }} - {{ order.destination }}</th>
+                      <th> ${{ order.precio|floatformat:2 }} </th>
+                      <th>{{ order.peso|floatformat:2  }} [{{order.unidad}}]</th>
+                      <th>$ {{ order.tarifa|floatformat:2  }}</th>
+                      <th>{{ order.distancia|floatformat:2  }} [Km]</th>
+                      <th>
+                        {% if order.status == 'PD' %}
+                        <label class="badge badge-info">PENDIENTE</label>
+                        {% elif order.status == 'EP' %}
+                        <label class="badge badge-warning">EN PROCESO</label>
+                        {% elif order.status == 'FN' %}
+                        <label class="badge badge-success">FINALIZADO</label>
+                        {% elif order.status == 'CN' %}
+                        <label class="badge badge-danger">CANCELADO</label>
+                        {% endif %}
+                      </th>
+                      
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+{% endblock %}  
+
+
+
+{% block custom_final_script %}
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+<script>
+    $(document).ready( function () {
+      
+        $('input[name="daterange"]').daterangepicker();
+        $('#driverInfo').select2();
+
+  } );
+
+
+
+
+  $(function() {
+
+    // Grafico dona
+    var doughnutPieData = {
+    datasets: [{
+      data: [
+            {{ ordenes_pendientes | length }},
+            {{ ordenes_proceso | length }},
+            {{ ordenes_finalizado | length }},
+            {{ ordenes_cancelado | length }}
+      ],
+      backgroundColor: [
+        'rgba(0, 255, 255, 0.5)',
+        'rgba(255, 206, 86, 0.5)',
+        'rgba(75, 192, 192, 0.5)',
+        'rgba(54, 162, 235, 0.5)',
+        
+      ],
+      borderColor: [
+        'rgba(0, 204, 204, 0.5)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(54, 162, 235, 1)',
+        
+      ],
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        'Pendiente',
+        'En Proceso',
+        'Finalizado',
+        'Cancelado'
+    ]
+  };
+
+    var doughnutPieOptions = {
+    responsive: true,
+    animation: {
+      animateScale: true,
+      animateRotate: true
+    }
+  };
+
+    var areaData = {
+        labels: [
+            {% for fecha in fechas %}
+                "{{ fecha }}",
+            {% endfor %}
+            
+        ],
+        datasets: [{
+        label: 'Ganancia',
+        data: [
+            {% for val in valores %}
+                "{{ val }}",
+            {% endfor %}
+        ],
+        backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+            'rgba(255,99,132,1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1,
+        fill: true, // 3: no fill
+        }]
+    };
+
+    var areaOptions = {
+        plugins: {
+        filler: {
+            propagate: true
+        }
+        }
+    }
+    
+    if ($("#doughnutChart").length) {
+        var doughnutChartCanvas = $("#doughnutChart").get(0).getContext("2d");
+        var doughnutChart = new Chart(doughnutChartCanvas, {
+        type: 'doughnut',
+        data: doughnutPieData,
+        options: doughnutPieOptions
+        });
+    }
+
+
+    if ($("#areaChart").length) {
+        var areaChartCanvas = $("#areaChart").get(0).getContext("2d");
+        var areaChart = new Chart(areaChartCanvas, {
+        type: 'line',
+        data: areaData,
+        options: areaOptions
+        });
+    }
+
+});
+
+
+  </script> 
+{% endblock %}

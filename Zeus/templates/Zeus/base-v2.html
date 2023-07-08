@@ -55,15 +55,15 @@
           <span></span>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/trucks">
-            <i class="mdi mdi-truck menu-icon"></i>
-            <span class="menu-title">Camiones</span>
+          <a class="nav-link" href="/orders">
+            <i class="mdi mdi-package-variant menu-icon"></i>
+            <span class="menu-title">Ordenes Activas</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/orders">
-            <i class="mdi mdi-package-variant menu-icon"></i>
-            <span class="menu-title">Ordenes</span>
+          <a class="nav-link" href="/trucks">
+            <i class="mdi mdi-truck menu-icon"></i>
+            <span class="menu-title">Camiones</span>
           </a>
         </li>
         <li class="nav-item">
@@ -73,10 +73,24 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/reportes">
-            <i class="mdi mdi-chart-areaspline menu-icon"></i>
-            <span class="menu-title">Reporte</span>
+          <a class="nav-link" href="/ordenes_completas">
+            <i class="mdi mdi-package-variant-closed menu-icon"></i>
+            <span class="menu-title">Ordenes Completas</span>
           </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+            <i class="mdi mdi-chart-areaspline menu-icon"></i>
+            <span class="menu-title">Reportes</span>
+            <i class="menu-arrow"></i>
+          </a>
+          <div class="collapse" id="ui-basic">
+            <ul class="nav flex-column sub-menu">
+              <li class="nav-item"> <a class="nav-link" href="/reportes">Reporte de Ordenes</a></li>
+              <li class="nav-item"> <a class="nav-link" href="/reporte_vehiculos">Reporte de Vehiculos</a></li>
+              <li class="nav-item"> <a class="nav-link" href="/reporte_conductores">Reporte de Conductores</a></li>
+            </ul>
+          </div>
         </li>
         <li class="nav-item sidebar-category">
           <p></p>
