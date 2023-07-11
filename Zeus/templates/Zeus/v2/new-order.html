@@ -250,15 +250,28 @@ $( document ).ready(function() {
   $('#client').select2();
   $('#driverInfo').select2();
 
+  $('#driverInfo').change(function() {
+    var placa = getPlaca($('#driverInfo').val())
+    if(placa === 'Sin asignar'){
+      $('#camionAsignado').css("color", "red");
+    } else {
+      $('#camionAsignado').css("color", "black");
+    }
+    $('#camionAsignado').val(placa)
+  });
+
 
   $('#loadingGif').css('display', 'none');
 
-  var placa = $('#driverInfo').find(":selected").attr("data-truck")
+  var placa = getPlaca($('#driverInfo').val())
   if(placa === 'Sin asignar'){
     $('#camionAsignado').css("font-color", "red");
   } else {
     $('#camionAsignado').css("font-color", "black");
   }
+
+
+
   $('#camionAsignado').val(placa);
 
   $('#guiaRemision').change(function() {
@@ -273,15 +286,7 @@ $( document ).ready(function() {
   
 });
 
-$('#driverInfo').on('change', function() {
-  var placa = $('#driverInfo').find(":selected").attr("data-truck")
-  if(placa === 'Sin asignar'){
-    $('#camionAsignado').css("color", "red");
-  } else {
-    $('#camionAsignado').css("color", "black");
-  }
-  $('#camionAsignado').val(placa)
-});
+
 
 
 $('#pesoValue').on('change', function() {
@@ -296,6 +301,21 @@ $('#distanciaInput').on('change', function() {
     calculateTarifa()
     console.log('Tarifa');
 })
+
+
+function getPlaca(driver_id){
+  
+  var conductores_info = {
+    {% if driver_list|length > 0 %}
+    {% for driver in driver_list %}
+      '{{ driver.id }}' : '{{ driver.placa }}',
+      {% endfor %}
+  {% endif %}
+  }
+
+  console.log(conductores_info[driver_id])
+  return conductores_info[driver_id]
+}
 
 
 
