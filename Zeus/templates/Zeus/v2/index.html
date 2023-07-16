@@ -22,7 +22,7 @@
                   Accion
                 </th>
                 <th>
-                  Camion
+                  N# Orden
                 </th>
                 <th>
                   Ruta
@@ -39,7 +39,7 @@
                   </button>
                 </td>
                 <td class="py-1">
-                  {{ orden.camion }}
+                  {{ orden.id |stringformat:"05d" }}
                 </td>
                 <td>
                   {{ orden.ruta }}

@@ -95,7 +95,7 @@
     <div class="col-lg-6 grid-margin stretch-card">
       <div class="card">
         <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-          <h4 class="card-title">Ganacia por Ordenes</h4>
+          <h4 class="card-title">Ganacia por Ordenes Finalizadas</h4>
           <canvas id="areaChart" width="920" height="460" style="display: block; height: 230px; width: 460px;" class="chartjs-render-monitor"></canvas>
         </div>
       </div>
@@ -116,6 +116,7 @@
             <thead>
                 <tr>
                     <th> Codigo </th>
+                    <th> Fecha </th>
                     <th> Contenido </th>
                     <th> Ruta </th>
                     <th> Precio </th>
@@ -129,6 +130,7 @@
                 {% for order in order_list %}
                     <tr>
                         <th>{{ order.id | stringformat:"05d"  }}</th>
+                        <th>{{ order.creation_date | date:"M d, Y"  }}</th>
                         <th>{{ order.content  }}</th>
                         <th>{{ order.origin }} - {{ order.destination }}</th>
                         <th> ${{ order.precio|floatformat:2 }} </th>

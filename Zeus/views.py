@@ -766,20 +766,24 @@ def reportes(request):
 
     list_orders_json = []
     for order in list_orders:
-        list_orders_json.append(model_to_dict(order))
+        filtered_order = model_to_dict(order)
+        filtered_order['creation_date'] = order.creation_date
+        list_orders_json.append(filtered_order)
         day_date = str(order.creation_date.date())
         if order.status == 'FN':
             if order.precio:
                 if day_date in revenue.keys():
                     revenue[day_date] = revenue[day_date] + order.precio
+                    print('hello => ' , day_date)
                 else:
+                    print('hello => ' , day_date)
                     revenue[day_date] = order.precio
                 
                 total_revenue += order.precio
                 total_distance += order.distancia
                 total_ordenes_finalizadas += 1
     
-
+    print('=>', revenue)
 
     context['fechas'] = revenue.keys()
     context['valores'] = revenue.values()
