@@ -1,6 +1,8 @@
 import csv
 import re
 import json
+import pdfkit
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -225,8 +227,6 @@ def view_orders(request, order_id):
     return render(request, 'Zeus/v2/order-view.html', context)
     # except:
       #  return redirect('dashboard')
-
-
 
 @login_required(login_url="/login")
 def new_truck(request):
@@ -1060,4 +1060,4 @@ def ver_formulario(request, order_id):
     print(formulario_json)
 
     return render(request, 'Zeus/v2/ver-formulario.html', context)
-    
+

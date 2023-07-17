@@ -45,7 +45,6 @@ urlpatterns = [
 
     path("ver_formulario/<str:order_id>", views.ver_formulario, name="ver_formulario"),
 
-    
 
     
     
