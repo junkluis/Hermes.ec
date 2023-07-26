@@ -87,6 +87,8 @@ class Order(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
+    order_file = models.ForeignKey('Console', on_delete=models.CASCADE, blank=True, null=True)
+
 class OrdersFile(models.Model):
     orden = models.ForeignKey('Order', on_delete=models.CASCADE)
     archivo = models.ForeignKey('Console', on_delete=models.CASCADE)

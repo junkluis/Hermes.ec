@@ -23,6 +23,14 @@
                 <div class="row alig n-items-start">
                   <h1 class=" display-4">Reporte de Vehiculos</h1>
                 </div>
+                <div class="row">
+                  <div class="col-md-12" >
+                    <div class="form-group row" style="justify-content: right;">
+                      &nbsp;&nbsp;&nbsp;<button type="button" onclick="ImprimirReporte()" class="btn btn-lg btn-info" ><i class="mdi mdi-printer"></i> Imprimir</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
                 <div class="row alig n-items-start">
                     
                   </div>
@@ -35,123 +43,126 @@
     </div>
   </div>
 <br>
-<div class="row" id="reporte">
-  <div class="col-md-4 grid-margin stretch-card">
-    <div class="card bg-success d-flex align-items-center">
-      <div class="card-body py-5" onclick="mostrarTabla('camionesDisponibles')">
-        <div class="d-flex flex-row align-items-center flex-wrap justify-content-md-center justify-content-xl-start py-1">
-          <i class="mdi mdi mdi-truck text-white icon-lg icon_margin"></i>
-          <div class="ml-3 ml-md-0 ml-xl-3">
-            <h1 class="text-white font-weight-bold">{{ camiones_disponibles|length  }}</h1>
-            <h5 class="text-white font-weight-bold">Vehiculos disponibles</h5>
+<div id="imrpimirArea">
+  <div class="row" id="reporte">
+    <div class="col-md-4 grid-margin stretch-card">
+      <div class="card bg-success d-flex align-items-center">
+        <div class="card-body py-5" onclick="mostrarTabla('camionesDisponibles')">
+          <div class="d-flex flex-row align-items-center flex-wrap justify-content-md-center justify-content-xl-start py-1">
+            <i class="mdi mdi mdi-truck text-white icon-lg icon_margin"></i>
+            <div class="ml-3 ml-md-0 ml-xl-3">
+              <h1 class="text-white font-weight-bold">{{ camiones_disponibles|length  }}</h1>
+              <h5 class="text-white font-weight-bold">Vehiculos disponibles</h5>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="col-md-4 grid-margin stretch-card">
-    <div class="card bg-warning d-flex align-items-center">
-      <div class="card-body py-5" onclick="mostrarTabla('camionesMantenimiento')">
-        <div class="d-flex flex-row align-items-center flex-wrap justify-content-md-cehttp://localhost:8000/ordersnter justify-content-xl-start py-1">
-          <i class="mdi mdi-wrench text-white icon-lg icon_margin"></i>
-          <div class="ml-3 ml-md-0 ml-xl-3">
-            <h1 class="text-white font-weight-bold">{{ camiones_mantenimiento|length }}</h1>
-            <h5 class="text-white font-weight-bold">Vehiculos en Mantenimiento</h5>
+    <div class="col-md-4 grid-margin stretch-card">
+      <div class="card bg-warning d-flex align-items-center">
+        <div class="card-body py-5" onclick="mostrarTabla('camionesMantenimiento')">
+          <div class="d-flex flex-row align-items-center flex-wrap justify-content-md-center justify-content-xl-start py-1">
+            <i class="mdi mdi-wrench text-white icon-lg icon_margin"></i>
+            <div class="ml-3 ml-md-0 ml-xl-3">
+              <h1 class="text-white font-weight-bold">{{ camiones_mantenimiento|length }}</h1>
+              <h5 class="text-white font-weight-bold">Vehiculos en Mantenimiento</h5>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="col-md-4 grid-margin stretch-card">
-    <div class="card bg-secondary d-flex align-items-center">
-      <div class="card-body py-5" onclick="mostrarTabla('camionesInactivos')">
-        <div class="d-flex flex-row align-items-center flex-wrap justify-content-md-center justify-content-xl-start py-1">
-          <i class="mdi mdi-minus-circle-outline text-white icon-lg icon_margin"></i>
-          <div class="ml-3 ml-md-0 ml-xl-3">
-            <h1 class="text-white font-weight-bold">{{ camiones_inactivos|length }}</h1>
-            <h5 class="text-white font-weight-bold">Vehiculos Inactivos</h5>
+    <div class="col-md-4 grid-margin stretch-card">
+      <div class="card bg-secondary d-flex align-items-center">
+        <div class="card-body py-5" onclick="mostrarTabla('camionesInactivos')">
+          <div class="d-flex flex-row align-items-center flex-wrap justify-content-md-center justify-content-xl-start py-1">
+            <i class="mdi mdi-minus-circle-outline text-white icon-lg icon_margin"></i>
+            <div class="ml-3 ml-md-0 ml-xl-3">
+              <h1 class="text-white font-weight-bold">{{ camiones_inactivos|length }}</h1>
+              <h5 class="text-white font-weight-bold">Vehiculos Inactivos</h5>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-    <div class="col-lg-6 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-          <h4 class="card-title">Vehiculos <span>Disponibles</span></h4>
-          <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th> Placa </th>
-                    <th> Conductor </th>
-                    <th> Capacidad </th>
-                    <th> Estado </th>
-                </tr>
-            </thead>
-            <tbody id="camionesDisponibles" style="display: table-row-group;">
-                {% for truck in camiones_disponibles %}
-                    <tr>
-                        <th>{{ truck.license }}</th>
-                        {% if truck.user %}
-                            <th>{{ truck.user.first_name }} {{ truck.user.last_name }}</th>
-                        {% else %}
-                            <th><label class="badge badge-primary">Sin asignar</label></th>
-                        {% endif %}
-                        <th>{{ truck.capacity|floatformat:2 }} {{ truck.measurement }}</th>
-                        <th>
-                            <label class="badge badge-success">Disponible</label>
-                        </th>
-                        
-                    </tr>
-                {% endfor %}
-            </tbody>
-            <tbody id="camionesMantenimiento" style="display: none">
-                {% for truck in camiones_mantenimiento %}
-                    <tr>
-                        <th>{{ truck.license }}</th>
-                        {% if truck.user %}
-                            <th>{{ truck.user.first_name }} {{ truck.user.last_name }}</th>
-                        {% else %}
-                            <th><label class="badge badge-primary">Sin asignar</label></th>
-                        {% endif %}
-                        <th>{{ truck.capacity|floatformat:2 }} {{ truck.measurement }}</th>
-                        <th>
-                            <label class="badge badge-warning">En Mantenimiento</label>
-                        </th>
-                        
-                    </tr>
-                {% endfor %}
-            </tbody>
-            <tbody id="camionesInactivos" style="display: none">
-                {% for truck in camiones_inactivos %}
-                    <tr>
-                        <th>{{ truck.license }}</th>
-                        {% if truck.user %}
-                            <th>{{ truck.user.first_name }} {{ truck.user.last_name }}</th>
-                        {% else %}
-                            <th><label class="badge badge-primary">Sin asignar</label></th>
-                        {% endif %}
-                        <th>{{ truck.capacity|floatformat:2 }} {{ truck.measurement }}</th>
-                        <th>
-                            <label class="badge badge-secondary">Inactivo</label>
-                        </th>
-                        
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+      <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+            <h4 class="card-title">Vehiculos <span>Disponibles</span></h4>
+            <table class="table table-hover">
+              <thead>
+                  <tr>
+                      <th> Placa </th>
+                      <th> Conductor </th>
+                      <th> Capacidad </th>
+                      <th> Estado </th>
+                  </tr>
+              </thead>
+              <tbody id="camionesDisponibles" style="display: table-row-group;">
+                  {% for truck in camiones_disponibles %}
+                      <tr>
+                          <th>{{ truck.license }}</th>
+                          {% if truck.user %}
+                              <th>{{ truck.user.first_name }} {{ truck.user.last_name }}</th>
+                          {% else %}
+                              <th><label class="badge badge-primary">Sin asignar</label></th>
+                          {% endif %}
+                          <th>{{ truck.capacity|floatformat:2 }} {{ truck.measurement }}</th>
+                          <th>
+                              <label class="badge badge-success">Disponible</label>
+                          </th>
+                          
+                      </tr>
+                  {% endfor %}
+              </tbody>
+              <tbody id="camionesMantenimiento" style="display: none">
+                  {% for truck in camiones_mantenimiento %}
+                      <tr>
+                          <th>{{ truck.license }}</th>
+                          {% if truck.user %}
+                              <th>{{ truck.user.first_name }} {{ truck.user.last_name }}</th>
+                          {% else %}
+                              <th><label class="badge badge-primary">Sin asignar</label></th>
+                          {% endif %}
+                          <th>{{ truck.capacity|floatformat:2 }} {{ truck.measurement }}</th>
+                          <th>
+                              <label class="badge badge-warning">En Mantenimiento</label>
+                          </th>
+                          
+                      </tr>
+                  {% endfor %}
+              </tbody>
+              <tbody id="camionesInactivos" style="display: none">
+                  {% for truck in camiones_inactivos %}
+                      <tr>
+                          <th>{{ truck.license }}</th>
+                          {% if truck.user %}
+                              <th>{{ truck.user.first_name }} {{ truck.user.last_name }}</th>
+                          {% else %}
+                              <th><label class="badge badge-primary">Sin asignar</label></th>
+                          {% endif %}
+                          <th>{{ truck.capacity|floatformat:2 }} {{ truck.measurement }}</th>
+                          <th>
+                              <label class="badge badge-secondary">Inactivo</label>
+                          </th>
+                          
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+            <h4 class="card-title">Vehiculos por estado</h4>
+            <canvas id="doughnutChart" width="920" height="460" style="display: block; height: 230px; width: 460px;" class="chartjs-render-monitor"></canvas>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-lg-6 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-          <h4 class="card-title">Vehiculos por estado</h4>
-          <canvas id="doughnutChart" width="920" height="460" style="display: block; height: 230px; width: 460px;" class="chartjs-render-monitor"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
+
 
   
 
@@ -170,6 +181,34 @@
         $('input[name="daterange"]').daterangepicker();
 
   } );
+
+
+  function ImprimirReporte(){
+    console.log('hello');
+    $("#imrpimirArea").printThis({
+      debug: false,               // show the iframe for debugging
+      importCSS: true,            // import parent page css
+      importStyle: true,         // import style tags
+      printContainer: true,       // print outer container/$.selector
+      loadCSS: "",                // path to additional css file - use an array [] for multiple
+      pageTitle: "Transpflor s.a.",              // add title to print page
+      removeInline: false,        // remove inline styles from print elements
+      removeInlineSelector: "*",  // custom selectors to filter inline styles. removeInline must be true
+      printDelay: 333,            // variable print delay
+      header: null,               // prefix to html
+      footer: null,               // postfix to html
+      base: false,                // preserve the BASE tag or accept a string for the URL
+      formValues: false,           // preserve input/form values
+      canvas: true,              // copy canvas content
+      doctypeString: '...',       // enter a different doctype for older markup
+      removeScripts: false,       // remove script tags from print content
+      copyTagClasses: false,      // copy classes from the html & body tag
+      beforePrintEvent: null,     // function for printEvent in iframe
+      beforePrint: null,          // function called before iframe is filled
+      afterPrint: null            // function called before iframe is removed
+    });
+    console.log('hello');
+  }
 
 
   function mostrarTabla(section){

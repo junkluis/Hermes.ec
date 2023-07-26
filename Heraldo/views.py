@@ -131,6 +131,10 @@ def get_orders(request):
                         'full_name': order.client.first_name + '' + order.client.last_name,
                     }
                     order_json['truck'] = model_to_dict(order.truck)
+                    try:
+                        order_json['order_file'] = 'https://hermes-ec.herokuapp.com/files/download/?name=' + order.order_file.archivo.name
+                    except:
+                        order_json['order_file'] = ""
                     order_list_json.append(order_json)
             
             context['orders'] = order_list_json

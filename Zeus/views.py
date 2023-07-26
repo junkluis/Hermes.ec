@@ -17,6 +17,14 @@ import hashlib
 
 from django.core.mail import EmailMessage
 
+import os
+
+import pdfkit
+from django.http import FileResponse
+from django.template.loader import render_to_string
+
+from Hermes import settings
+
 
 from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY, USER_MAIL,  USER_MAIL_PASSWORD, SITE_URL
 
@@ -203,6 +211,8 @@ def orders(request):
         order_json['driver'] = order.driver.first_name + ' ' + order.driver.last_name
         order_json['truck'] = order.truck.brand + ' - ' + order.truck.license
         order_json['status'] = ORDER_STATUS[order.status]
+        if order.order_file:
+            order_json['order_file'] = model_to_dict(order.order_file)
         order_list_json.append(order_json)
     
     context['order_list'] = order_list_json
@@ -355,6 +365,27 @@ def new_order(request):
                 archivo=archivo_raw,
                 nombre=archivo._name
             )
+        
+        # Create PDF file
+        pdf_path = create_order_pdf(new_order.id)
+
+
+        from django.core.files.base import ContentFile, File
+        
+        with open(pdf_path, 'rb') as f:
+            file = File(f)
+            file_name = file.name.split('/')[-1]
+            file.name = file_name
+            archivo_pdf = Console.objects.create(
+                name='orden_pdf',
+                archivo=file,
+            )
+        
+        new_order.order_file = archivo_pdf
+        new_order.save()
+
+        os.remove(pdf_path)
+        
 
         return redirect('orders')
 
@@ -704,6 +735,48 @@ def view_order_documents(request, order_id):
         print('-'*10)
 
     return render(request, 'Zeus/v2/order-file.html', context)
+
+
+def view_order_documents_pdf(request, order_id):
+    context = {}
+    try:
+        order = Order.objects.get(id=order_id)
+        context['order'] = model_to_dict(order)
+        context['order']['status'] = ORDER_STATUS[order.status]
+        context['order']['client'] = model_to_dict(order.client)
+        context['order']['driver'] = model_to_dict(order.driver)
+        context['order']['truck'] = model_to_dict(order.truck)
+
+        archivos = OrdersFile.objects.filter(orden=order)
+        file_names = []
+        for archivo in archivos:
+
+            file_names.append(model_to_dict(archivo.archivo))
+        
+        context['order']['files'] = file_names
+
+        context['gkey'] = MAP_KEY
+
+        current_lat = float(order.location_coord_lat)
+        current_long = float(order.location_coord_long)
+        context['current_location'] = (current_lat, current_long)
+
+        print('hello')
+        print(order)
+        print(current_lat)
+
+        destination_lat = float(order.destination_coord_lat)
+        destination_long = float(order.destination_coord_long)
+        context['destination_location'] = (destination_lat, destination_long)
+
+    except Exception as e:
+        context['error_message'] = 'No se pudo obtener la orden ' + str(order_id)
+        print('-'*10)
+        print(e)
+        return render(request, 'Zeus/v2/error-page.html', context)
+        print('-'*10)
+
+    return render(request, 'Zeus/v2/order-file-pdf.html', context)
 
 @login_required(login_url="/login")
 def cancel_order(request, order_id):
@@ -1060,4 +1133,35 @@ def ver_formulario(request, order_id):
     print(formulario_json)
 
     return render(request, 'Zeus/v2/ver-formulario.html', context)
+
+
+def ejemplo(request):
+    
+    context = {}
+    order_list = Order.objects.filter(status__in=['EP', 'PD']).order_by('creation_date').reverse()
+    create_order_pdf(order_id=order_list.first().id)
+    order_list_json = []
+    for order in order_list:
+        order_json = model_to_dict(order)
+        order_json['client'] = order.client.first_name + ' ' + order.client.last_name
+        order_json['admin'] = order.responsible.first_name + ' ' + order.responsible.last_name
+        order_json['driver'] = order.driver.first_name + ' ' + order.driver.last_name
+        order_json['truck'] = order.truck.brand + ' - ' + order.truck.license
+        order_json['status'] = ORDER_STATUS[order.status]
+        order_list_json.append(order_json)
+    
+    context['order_list'] = order_list_json
+    context['view_title'] = 'Ordenes En Proceso o Pendientes'
+    return render(request, 'Zeus/v2/order-list.html', context)
+
+
+def create_order_pdf(order_id):
+    options = {
+        "enable-local-file-access": "",
+        'page-size': 'Letter',
+    }
+    pdf_path = os.path.join(settings.BASE_DIR, 'static', 'pdf', 'reporte-'+str(order_id)+'.pdf')
+    pdfkit.from_url('https://hermes-ec.herokuapp.com/view_order_documents_pdf/'+str(order_id), pdf_path, options=options)
+    print(pdf_path)
+    return pdf_path
 

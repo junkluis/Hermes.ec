@@ -18,6 +18,7 @@ urlpatterns = [
     path("cancelar/<str:order_id>", views.cancel_order, name="cancel_order"),
 
     path("view_order_documents/<str:order_id>", views.view_order_documents, name="view_order_documents"),
+    path("view_order_documents_pdf/<str:order_id>", views.view_order_documents_pdf, name="view_order_documents_pdf"),
     path("new_order", views.new_order, name="new_order"),
     path("hermes_settings", views.hermes_settings, name="hermes_settings"),
 
@@ -44,6 +45,9 @@ urlpatterns = [
     path("reporte_conductores", views.reporte_conductores, name="reporte_conductores"),
 
     path("ver_formulario/<str:order_id>", views.ver_formulario, name="ver_formulario"),
+
+
+    path("ejemplo", views.ejemplo, name="ejemplo"),
 
 
     
