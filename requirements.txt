@@ -33,3 +33,4 @@ weasyprint==59.0
 webencodings==0.5.1
 whitenoise==6.4.0
 zopfli==0.2.2
+wkhtmltopdf-pack-ng==0.12.3.0
