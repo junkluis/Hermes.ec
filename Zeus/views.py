@@ -1156,12 +1156,14 @@ def ejemplo(request):
 
 
 def create_order_pdf(order_id):
+    path_wkhtmltopdf = '/app/bin/wkhtmltopdf'
+    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+
     options = {
         "enable-local-file-access": "",
         'page-size': 'Letter',
     }
     pdf_path = os.path.join(settings.BASE_DIR, 'static', 'pdf', 'reporte-'+str(order_id)+'.pdf')
-    pdfkit.from_url('https://hermes-ec.herokuapp.com/view_order_documents_pdf/'+str(order_id), pdf_path, options=options)
-    print(pdf_path)
+    pdfkit.from_url('https://hermes-ec.herokuapp.com/view_order_documents_pdf/'+str(order_id), pdf_path, options=options, configuration=config)
     return pdf_path
 
