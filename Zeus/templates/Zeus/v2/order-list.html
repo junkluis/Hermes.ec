@@ -34,7 +34,7 @@
                     <tbody>
                         {% for order in order_list %}
                             <tr>
-                                <th> {{ order.id | stringformat:"05d" }} </th>>
+                                <th> {{ order.id | stringformat:"05d" }} </th>
                                 <th>{{ order.truck }}</th>
                                 <th>{{ order.origin }} - {{ order.destination }}</th>
                                 <th> ${{ order.precio|floatformat:2 }} </th>

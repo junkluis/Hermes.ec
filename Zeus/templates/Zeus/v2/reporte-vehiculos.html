@@ -1,4 +1,5 @@
 {% extends "Zeus/base-v2.html" %}
+{% load static %}
 
 
 {% block custom_style %}
@@ -41,9 +42,25 @@
         </div>
       </div>
     </div>
-  </div>
 <br>
 <div id="imrpimirArea">
+  <div class="card w-100" id="report-header">
+    <div class="card-body">
+      <div>
+        <div class="mb-3 mb-sm-0" style="text-align: center;">
+          <img src="{% static 'img/logo-grande.jpeg' %}" width="150">
+          <div class="row alig n-items-start" style="justify-content: center;">
+            <h1 class=" display-3">Reporte de Vehiculos</h1>
+  
+          </div>
+          <div class="row alig n-items-start">
+          </div>
+          <br/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
   <div class="row" id="reporte">
     <div class="col-md-4 grid-margin stretch-card">
       <div class="card bg-success d-flex align-items-center">
@@ -174,6 +191,8 @@
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.js"></script>
 
 <script>
     $(document).ready( function () {
