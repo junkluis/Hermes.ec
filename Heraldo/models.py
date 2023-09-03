@@ -76,7 +76,7 @@ class Order(models.Model):
     location_update = models.DateTimeField(auto_now=True)
     peso = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
     tarifa = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
-    precio = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
+    precio = models.DecimalField(null=True, blank=True, max_digits=100, decimal_places=8)
     distancia = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
     status = models.CharField(
         max_length=2,
