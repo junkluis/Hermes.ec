@@ -6,6 +6,26 @@ CAR_YEARS_CHOICES = [
     '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029',
     ]
 
+CAR_BRAND_CHOICES = [
+'Jac',
+'Jmc',
+'Hino',
+'Sinotruck',
+'Chevrolet',
+'Renault',
+'Nissan',
+'Mercedes-Benz',
+]
+
+CAR_COLOR_CHOICES = [
+    'Blanco',
+    'Rojo',
+    'Negro',
+    'Amarillo',
+    'Gris',
+    'Azul',
+]
+
 USER_ROL = {
     'AD':'Admin', 
     'DR':'Drive',

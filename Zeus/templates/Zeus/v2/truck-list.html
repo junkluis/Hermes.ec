@@ -49,7 +49,9 @@
                                   <label class="badge badge-warning">Mantenimiento</label>
                                   {% endif %}
                                 </th>
-                                <th>{{ truck.driver }}</th>
+                                <th>
+                                  {% if truck.driver %} {{ truck.driver }} {% else %}Por definir  ⚠️  {% endif %}
+                                </th>
                                 <th>{{ truck.capacity }}</th>
                                 <th>{{ truck.license }}</th>
                                 <th>{{ truck.brand }}</th>

@@ -26,7 +26,7 @@ from django.template.loader import render_to_string
 from Hermes import settings
 
 
-from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY, USER_MAIL,  USER_MAIL_PASSWORD, SITE_URL
+from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY, USER_MAIL,  USER_MAIL_PASSWORD, SITE_URL, CAR_BRAND_CHOICES, CAR_COLOR_CHOICES
 
 
 def index(request):
@@ -279,6 +279,9 @@ def new_truck(request):
         
         context['driver_list_json'] = driver_list_json
         context['car_years_choices'] = CAR_YEARS_CHOICES
+        context['car_brands_choices'] = CAR_BRAND_CHOICES
+        context['color_options'] = CAR_COLOR_CHOICES
+        
         return render(request, 'Zeus/v2/new-truck.html', context)
 
 @login_required(login_url="/login")
@@ -564,8 +567,8 @@ def edit(request, object, key_id):
             truck_id = request.POST["truck_id"]
             truck = Truck.objects.get(id=truck_id)
             try:
-                driver = User.objects.get(pk=truck.user.id)
-            except Rol.DoesNotExist:
+                driver = User.objects.get(pk=int(request.POST["driver"]))
+            except:
                 driver = None
 
             truck.user = driver
@@ -573,6 +576,7 @@ def edit(request, object, key_id):
             truck.capacity = request.POST["capacity"]
             truck.measurement = request.POST["unit"]
             truck.color = request.POST["color"]
+            truck.color_name = request.POST["colorName"]
             truck.brand = request.POST["brand"]
             truck.year = request.POST["year"]
             truck.save()
@@ -605,6 +609,8 @@ def edit(request, object, key_id):
             
             context['driver_list_json'] = driver_list_json
             context['car_years_choices'] = CAR_YEARS_CHOICES
+            context['car_brands_choices'] = CAR_BRAND_CHOICES
+            context['color_options'] = CAR_COLOR_CHOICES
 
             truck = Truck.objects.get(id=key_id)
             truck_json = model_to_dict(truck)

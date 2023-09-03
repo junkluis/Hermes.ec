@@ -21,7 +21,7 @@
                     {% for driver in driver_list_json %}
                         <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
                     {% endfor %}
-                    <option value="00">Ninguno</option>
+                    <option value="00">Por Definir</option>
                 </select>           
                 </div>
               </div>
@@ -55,12 +55,23 @@
             <div class="col-md-6">
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Color</label>
-                <div class="col-sm-2">
-                  <input type="color" {% if action == 'edit' %} value="{{ confirm_truck.color }}" {% else %} value="#ff0000"  {% endif %}  class="form-control" id="color" name="color" aria-describedby="emailHelp">
+                <div class="col-sm-7"> 
+                  <select class="form-select form-control" id="colorName" name="colorName">
+                    {% for color in color_options %}
+                        <option value="{{ color }}">{{ color }}</option>
+                    {% endfor %}
+                </select>           
                 </div>
+                <div class="col-sm-2">
+                  <input type="color" readonly {% if action == 'edit' %} value="{{ confirm_truck.color }}" {% else %} value="#ff0000"  {% endif %}  class="form-control" id="color" name="color" aria-describedby="emailHelp">
+                </div>
+                <!--
+                  
                 <div class="col-sm-7">
                   <input type="text" class="form-control"  class="form-control" id="colorName" name="colorName" required="required" aria-describedby="emailHelp">
                 </div>
+                -->
+                
               </div>
             </div>
           </div>
@@ -69,8 +80,18 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Marca</label>
                 <div class="col-sm-9">
+                  <select class="form-select form-control" id="driver" name="brand">
+                    {% for brands in car_brands_choices %}
+                        <option value="{{brands}}">{{ brands }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                </div>
+                <!--
+                <div class="col-sm-9">
                   <input type="text" {% if action == 'edit' %} value="{{ confirm_truck.brand }}" {% endif %}  class="form-control" id="brand" name="brand" aria-describedby="emailHelp">                </div>
-              </div>
+               </div>
+                -->
             </div>
             <div class="col-md-6">
               <div class="form-group row">
@@ -117,21 +138,27 @@
 {% block custom_final_script %}
 <script type="text/javascript" src="https://chir.ag/projects/ntc/ntc.js"></script>
 <script>
+
+  color_codes = {
+    'Blanco': '#FFFFFF',
+    'Rojo': '#ff0000',
+    'Negro': '#000000',
+    'Amarillo': '#ffff00',
+    'Gris':'#9b9b9b',
+    'Azul': '#0000ff',
+  }
+
   $( document ).ready(function() {
-    detectarColor();
+    $("#color").val('#FFFFFF')
 
 });
 
-$("#color").change(function(){
-  detectarColor();
+$("#colorName").change(function(){
+   valor = $('#colorName').val();
+   $("#color").val(color_codes[valor])
 });
 
 
-function detectarColor(){
-  colorInput = $('#color').val();
-  var n_match = ntc.name(colorInput);
-  $('#colorName').val(n_match[1]);
-}
 
 </script>
 {% endblock %}
