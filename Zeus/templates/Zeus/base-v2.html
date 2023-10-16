@@ -26,6 +26,16 @@
       font-size: 0.875rem;
       line-height: 1;
       font-weight: 400;
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      user-select: none;
+      border: 1px solid transparent;
+      padding: 0.875rem 1.5rem;
+      border-radius: 0.1875rem;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      color: #212529;
+      background-color: #f8f9fa;
     }
 
     .navbar-transpflor{
@@ -196,6 +206,11 @@
       });
       $('a[class^="paginate_button"]').addClass('btn btn-light');
   } );
+
+    $('.paginate_button').keyup(function(){
+      $('a[class^="paginate_button"]').addClass('btn btn-light');
+    });
+
   </script> 
 
 
