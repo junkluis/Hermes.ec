@@ -18,10 +18,19 @@
                 <label class="col-sm-3 col-form-label">Conductor</label>
                 <div class="col-sm-9"> 
                   <select class="form-select form-control" id="driver" name="driver">
-                    {% for driver in driver_list_json %}
-                        <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
-                    {% endfor %}
                     <option value="00">Por Definir</option>
+                    {% for driver in driver_list_json %}
+                        {% if action == 'edit' %}
+                          {% if driver.id == confirm_truck.user %}
+                          <option value="{{ driver.id }}" selected>{{ driver.name }} {{ driver.last_name }}</option>
+                          {% else %}
+                          <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
+                          {% endif %}
+                        {% else %}
+                          <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
+                        {% endif %}
+                        
+                    {% endfor %}
                 </select>           
                 </div>
               </div>
@@ -41,7 +50,7 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Capacidad</label>
                 <div class="col-sm-5">
-                  <input type="number" min="0" {% if action == 'edit' %} value="{{ confirm_truck.capacity }}" {% endif %}  class="form-control" id="capacity" name="capacity" required="required" aria-describedby="emailHelp">
+                  <input type="number" min="0" {% if action == 'edit' %} value="{{ confirm_truck.capacity|floatformat:2 }}" {% endif %}  class="form-control" id="capacity" name="capacity" required="required" aria-describedby="emailHelp">
                 </div>
                 <div class="col-sm-4">
                   <select class="form-select form-control" id="unit" name="unit">
@@ -58,7 +67,16 @@
                 <div class="col-sm-7"> 
                   <select class="form-select form-control" id="colorName" name="colorName">
                     {% for color in color_options %}
-                        <option value="{{ color }}">{{ color }}</option>
+                      {% if action == 'edit' %}
+                          {% if color == confirm_truck.color_name %}
+                          <option value="{{ color }}" selected>{{ color }}</option>
+                          {% else %}
+                          <option value="{{ color }}">{{ color }}</option>
+                          {% endif %}
+                        {% else %}
+                          <option value="{{ color }}">{{ color }}</option>
+                        {% endif %}
+                        
                     {% endfor %}
                 </select>           
                 </div>
@@ -82,7 +100,16 @@
                 <div class="col-sm-9">
                   <select class="form-select form-control" id="driver" name="brand">
                     {% for brands in car_brands_choices %}
+                      {% if action == 'edit' %}
+                          {% if brands == confirm_truck.brand %}
+                          <option value="{{brands}}" selected>{{ brands }}</option>
+                          {% else %}
+                          <option value="{{brands}}">{{ brands }}</option>
+                          {% endif %}
+                        {% else %}
                         <option value="{{brands}}">{{ brands }}</option>
+                        {% endif %}
+                        
                     {% endfor %}
                   </select>
                 </div>
@@ -99,7 +126,16 @@
                 <div class="col-sm-9">
                   <select class="form-select form-control" id="driver" name="year">
                     {% for year in car_years_choices %}
-                        <option value="{{year}}">{{ year }}</option>
+                      {% if action == 'edit' %}
+                          {% if year == confirm_truck.year %}
+                          <option value="{{year}}" selected>{{ year }}</option>
+                          {% else %}
+                          <option value="{{year}}">{{ year }}</option>
+                          {% endif %}
+                        {% else %}
+                          <option value="{{year}}">{{ year }}</option>
+                        {% endif %}
+                        
                     {% endfor %}
                 </select>
                 </div>
@@ -112,8 +148,20 @@
                 <label class="col-sm-3 col-form-label">Estado</label>
                 <div class="col-sm-9">
                   <select class="form-select form-control" id="estado" name="estado">
+                    {% if action == 'edit' %}
+                    {% if confirm_truck.status == 'Disponible'  %}
+                    <option value="Disponible" selected>Disponible</option>
+                    <option value="En Mantenimiento">En Mantenimiento</option>
+                    {% else %}
+                    <option value="Disponible">Disponible</option>
+                    <option value="En Mantenimiento" selected>En Mantenimiento</option>
+                    {% endif %}
+
+                    {% else %}
                     <option value="Disponible">Disponible</option>
                     <option value="En Mantenimiento">En Mantenimiento</option>
+                    {% endif %}
+                    
                   </select>
                 </div>
               </div>
@@ -130,7 +178,7 @@
             {% endfor %}
           </div>
           {% endif %}
-          
+
           {% if action == 'edit' %}
           <input type="hidden" value="{{ confirm_truck.id }}" class="form-control" id="truck_id" name="truck_id" >
           <input type="hidden" value="truck" class="form-control" id="object" name="object" >
@@ -160,6 +208,8 @@
 
   $( document ).ready(function() {
     $("#color").val('#FFFFFF')
+    valor = $('#colorName').val();
+   $("#color").val(color_codes[valor])
 
 });
 
