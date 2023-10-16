@@ -241,11 +241,49 @@ def view_orders(request, order_id):
 @login_required(login_url="/login")
 def new_truck(request):
     if request.method =='POST':
+        context = {}
         driver_id = request.POST["driver"]
         try:
             driver = User.objects.get(pk=driver_id)
         except:
             driver = None
+
+        error_list = []
+        existing_trucks = Truck.objects.filter(license = request.POST["license"])
+        if len(existing_trucks) > 0:
+            error_list.append('Ya existe un Camion registrado con la matricula '+ request.POST["license"])
+
+        if len(error_list) > 0:
+
+            user_list = User.objects.filter(is_active=True)
+            driver_list_json = []
+            for user in user_list:
+                try:
+                    rol = Rol.objects.get(user=user)
+                except Rol.DoesNotExist:
+                    rol = None
+
+                if rol and rol.user_rol == 'DR':
+                    driver_list_json.append({
+                        'id': user.id,
+                        'name': user.first_name,
+                        'last_name': user.last_name,
+                    })
+
+            context['driver_list_json'] = driver_list_json
+            context['car_years_choices'] = CAR_YEARS_CHOICES
+            context['car_brands_choices'] = CAR_BRAND_CHOICES
+            context['color_options'] = CAR_COLOR_CHOICES
+
+            context['error'] = True
+            context['error_list'] = error_list
+            context['confirm_truck'] = {
+                'license': request.POST["license"],
+                'capacity': request.POST["capacity"],
+                'color': request.POST["color"],
+            }
+            context['action'] = 'edit'
+            return render(request, 'Zeus/v2/new-truck.html', context)
 
         Truck.objects.create(
             user = driver,
@@ -563,6 +601,7 @@ def edit(request, object, key_id):
             return redirect('users')
 
         if request.POST["object"] == 'truck':
+            context = {}
 
             truck_id = request.POST["truck_id"]
             truck = Truck.objects.get(id=truck_id)
@@ -570,6 +609,45 @@ def edit(request, object, key_id):
                 driver = User.objects.get(pk=int(request.POST["driver"]))
             except:
                 driver = None
+
+            
+            error_list = []
+            existing_trucks = Truck.objects.filter(license = request.POST["license"]).exclude(id=truck_id)
+            if len(existing_trucks) > 0:
+                error_list.append('Ya existe un Camion registrado con la matricula '+ request.POST["license"])
+
+            if len(error_list) > 0:
+
+                user_list = User.objects.filter(is_active=True)
+                driver_list_json = []
+                for user in user_list:
+                    try:
+                        rol = Rol.objects.get(user=user)
+                    except Rol.DoesNotExist:
+                        rol = None
+
+                    if rol and rol.user_rol == 'DR':
+                        driver_list_json.append({
+                            'id': user.id,
+                            'name': user.first_name,
+                            'last_name': user.last_name,
+                        })
+                        
+                context['driver_list_json'] = driver_list_json
+                context['car_years_choices'] = CAR_YEARS_CHOICES
+                context['car_brands_choices'] = CAR_BRAND_CHOICES
+                context['color_options'] = CAR_COLOR_CHOICES
+
+                context['error'] = True
+                context['error_list'] = error_list
+                context['confirm_truck'] = {
+                    'license': request.POST["license"],
+                    'capacity': request.POST["capacity"],
+                    'color': request.POST["color"],
+                    'id': request.POST["truck_id"],
+                }
+                context['action'] = 'edit'
+                return render(request, 'Zeus/v2/new-truck.html', context)
 
             truck.user = driver
             truck.license = request.POST["license"]

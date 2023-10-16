@@ -121,6 +121,16 @@
           </div>
           <br/>
           <br/>
+          {% if error == True %}
+          <div class="alert alert-danger" role="alert">
+            <b> No fue posible guardar por los siguientes errores:</b>
+            
+            {% for error_message in error_list %}
+              <div> - {{ error_message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
           {% if action == 'edit' %}
           <input type="hidden" value="{{ confirm_truck.id }}" class="form-control" id="truck_id" name="truck_id" >
           <input type="hidden" value="truck" class="form-control" id="object" name="object" >
