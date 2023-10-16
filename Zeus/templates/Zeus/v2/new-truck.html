@@ -30,7 +30,7 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Placa</label>
                 <div class="col-sm-9">
-                  <input type="text" pattern="[A-Z]{3}[0-9]{3,}" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" required="required" aria-describedby="emailHelp">
+                  <input type="text" pattern="[A-Z]{3}[0-9]{3,}" maxlength="7" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" required="required" aria-describedby="emailHelp">
                   <small>Formato: 3 letras y 3 o mas numeros, Ejemplo: GYE123</small>
                 </div>
               </div>
@@ -63,7 +63,7 @@
                 </select>           
                 </div>
                 <div class="col-sm-2">
-                  <input type="color" readonly {% if action == 'edit' %} value="{{ confirm_truck.color }}" {% else %} value="#ff0000"  {% endif %}  class="form-control" id="color" name="color" aria-describedby="emailHelp">
+                  <input type="color" readonly="True" style="pointer-events: none" {% if action == 'edit' %} value="{{ confirm_truck.color }}" {% else %} value="#ff0000"  {% endif %}  class="form-control" id="color" name="color" aria-describedby="emailHelp">
                 </div>
                 <!--
                   

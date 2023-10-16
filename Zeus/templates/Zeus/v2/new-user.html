@@ -15,9 +15,9 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Identificacion<span style="color:red">*</span></label>
+                <label class="col-sm-3 col-form-label" >Identificacion<span style="color:red">*</span></label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control" pattern="[0-9]{10}" {% if action == 'edit' %} value="{{ confirm_user.username }}" {% endif %} class="form-control" id="identification" name="identification" required="required" aria-describedby="emailHelp">
+                  <input type="text" class="form-control" maxlength="10" pattern="[0-9]{10}" {% if action == 'edit' %} value="{{ confirm_user.username }}" {% endif %} class="form-control" id="identification" name="identification" required="required" aria-describedby="emailHelp">
                   <small id="textoFormato">Formato: Solo numeros, 10 digitos</small>
                 </div>
               </div>
@@ -40,7 +40,7 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Nombre<span style="color:red">*</span></label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control" pattern="[A-Za-z]\w+" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
+                  <input type="text" class="form-control"  maxlength="50"  pattern="[A-Za-z]\w+" {% if action == 'edit' %} value="{{ confirm_user.first_name }}" {% endif %} class="form-control" id="name" name="name" required="required" aria-describedby="emailHelp">
                 </div>
               </div>
             </div>
@@ -48,7 +48,7 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Apellido<span style="color:red">*</span></label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control" pattern="[A-Za-z]\w+" {% if action == 'edit' %} value="{{ confirm_user.last_name }}" {% endif %} class="form-control" id="lastName" name="last_name" required="required" aria-describedby="emailHelp">
+                  <input type="text" class="form-control"  maxlength="50"   pattern="[A-Za-z]\w+" {% if action == 'edit' %} value="{{ confirm_user.last_name }}" {% endif %} class="form-control" id="lastName" name="last_name" required="required" aria-describedby="emailHelp">
 
                 </div>
               </div>
@@ -134,7 +134,7 @@
   }
 
   $("#tipoIdentificacion").change(function(){
-    console.log()
+    $('#identification').val('')
     
     if($(this).val() == 'cedula'){
       $('#identification').attr('pattern', '[0-9]{10}');
@@ -147,6 +147,24 @@
       $("#textoFormato").html("");
     }
 
+  });
+
+  $('#identification').keyup(function () {
+    if($('#tipoIdentificacion').val() == 'cedula'){
+      this.value = this.value.replace(/[^0-9\.]/g,'');
+    }
+  });
+
+  $('#name').keyup(function () {
+    if($('#tipoIdentificacion').val() == 'cedula'){
+      this.value = this.value.replace(/[^a-zA-Zäáàëéèíìöóòúùñ \.]/g,'');
+    }
+  });
+
+  $('#lastName').keyup(function () {
+    if($('#tipoIdentificacion').val() == 'cedula'){
+      this.value = this.value.replace(/[^a-zA-Zäáàëéèíìöóòúùñ \.]/g,'');
+    }
   });
 
 
