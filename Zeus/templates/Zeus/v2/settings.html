@@ -18,7 +18,7 @@
                   {% csrf_token %}
                   <div class="form-group">
                     <label for="nombre">Nombre</label>
-                    <input type="text" class="form-control" id="nombre" placeholder="nombre" name="nombre" required>
+                    <input type="text" class="form-control" id="nombre" placeholder="nombre" name="nombre" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required>
                     <input type="hidden" class="form-control" name="action" id="action" value="add_location">
                   </div>
                   <div class="form-group">
@@ -92,15 +92,15 @@
                     <div class="row">
                         <div class="col-4">
                             <label >Hastas  6 Tn.</label>
-                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.toneladas_seis %} value={{ tarifas.toneladas_seis }} {% else %}  value="0" {% endif %} class="form-control" id="tarifa6Tn" placeholder="" name="tarifa6Tn" required>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.toneladas_seis %} value={{ tarifas.toneladas_seis }} {% else %}  value="0" {% endif %} class="form-control" id="tarifa6Tn" placeholder="" name="tarifa6Tn" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required>
                         </div>
                         <div class="col-4">
                             <label >6.01 Tn. - 8 Tn.</label>
-                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.toneladas %} value={{ tarifas.toneladas }} {% else %}  value="0" {% endif %} class="form-control" id="tarifaTn" placeholder="" name="tarifaTn" required>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.toneladas %} value={{ tarifas.toneladas }} {% else %}  value="0" {% endif %} class="form-control" id="tarifaTn" placeholder="" name="tarifaTn" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required>
                         </div>
                         <div class="col-4">
                             <label > Hasta 10 Tn.</label>
-                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.toneladas_diez %} value={{ tarifas.toneladas_diez }} {% else %}  value="0" {% endif %} class="form-control" id="tarifa10Tn" placeholder="" name="tarifa10Tn" required>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.toneladas_diez %} value={{ tarifas.toneladas_diez }} {% else %}  value="0" {% endif %} class="form-control" id="tarifa10Tn" placeholder="" name="tarifa10Tn" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required>
                         </div>
                     </div>
                   </div>
@@ -109,7 +109,7 @@
                     <div class="row">
                         <div class="col-4">
                             <label >Tarifa por 1 Kg.</label>
-                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.kilogramos %} value={{ tarifas.kilogramos }} {% else %}  value="0" {% endif %} class="form-control" id="tarifaKg" placeholder="tarifaKg" name="tarifaKg" required>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.kilogramos %} value={{ tarifas.kilogramos }} {% else %}  value="0" {% endif %} class="form-control" id="tarifaKg" placeholder="tarifaKg" name="tarifaKg" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required>
                         </div>
                     </div>
                   </div>
@@ -118,7 +118,7 @@
                     <div class="row">
                         <div class="col-4">
                             <label >Tarifa por 1 Lb.</label>
-                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.libras %} value={{ tarifas.libras }} {% else %}  value="0" {% endif %} class="form-control" id="tarifaLb" placeholder="tarifaLb" name="tarifaLb" required>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" {% if tarifas.libras %} value={{ tarifas.libras }} {% else %}  value="0" {% endif %} class="form-control" id="tarifaLb" placeholder="tarifaLb" name="tarifaLb" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required>
                         </div>
                     </div>
                   </div>

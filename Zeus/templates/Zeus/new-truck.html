@@ -26,7 +26,7 @@
                     </div>
                     <div class="col-6">
                         <label for="license" class="form-label">Licencia</label>
-                        <input type="text" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" required="required" aria-describedby="emailHelp">
+                        <input type="text" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required="required" aria-describedby="emailHelp">
                     </div>
                   </div>
                   <br/>

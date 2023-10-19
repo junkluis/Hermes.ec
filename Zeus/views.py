@@ -15,6 +15,7 @@ from django.forms.models import model_to_dict
 import datetime
 import hashlib
 
+
 from django.core.mail import EmailMessage
 
 import os
@@ -27,6 +28,8 @@ from Hermes import settings
 
 
 from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY, USER_MAIL,  USER_MAIL_PASSWORD, SITE_URL, CAR_BRAND_CHOICES, CAR_COLOR_CHOICES
+from datetime import datetime
+
 
 
 def index(request):
@@ -363,6 +366,10 @@ def new_order(request):
         tarifa = float(request.POST['tarifaAplicada'])
         distancia = float(request.POST['distanciaInput'].split(' ')[0])
         placa = request.POST['camionAsignado']
+        tiempo = request.POST['tiempo']
+        print(tiempo)
+        #datetime_object = datetime.strptime(tiempo, '%m/%d/%y, %H:%M')
+
         
 
         responsible = User.objects.get(username = request.user.username)
@@ -389,6 +396,7 @@ def new_order(request):
             precio= precio,
             distancia= distancia,
             unidad=unit,
+            tiempo_partida=tiempo,
         )
         
         guia_remision = request.FILES['guiaRemision']

@@ -88,7 +88,8 @@ class Order(models.Model):
     is_active = models.BooleanField(default=True)
 
     order_file = models.ForeignKey('Console', on_delete=models.CASCADE, blank=True, null=True)
-
+    tiempo_partida=models.DateTimeField(blank=True, null=True)
+    
 class OrdersFile(models.Model):
     orden = models.ForeignKey('Order', on_delete=models.CASCADE)
     archivo = models.ForeignKey('Console', on_delete=models.CASCADE)

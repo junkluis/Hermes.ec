@@ -39,7 +39,7 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Placa</label>
                 <div class="col-sm-9">
-                  <input type="text" pattern="[A-Z]{3}[0-9]{3,}" maxlength="7" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" required="required" aria-describedby="emailHelp">
+                  <input type="text" pattern="[A-Z]{3}[0-9]{3,}" maxlength="7" {% if action == 'edit' %} value="{{ confirm_truck.license }}" {% endif %}  class="form-control" id="license" name="license" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required="required" aria-describedby="emailHelp">
                   <small>Formato: 3 letras y 3 o mas numeros, Ejemplo: GYE123</small>
                 </div>
               </div>
@@ -50,7 +50,7 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">Capacidad</label>
                 <div class="col-sm-5">
-                  <input type="number" min="0" {% if action == 'edit' %} value="{{ confirm_truck.capacity|floatformat:2 }}" {% endif %}  class="form-control" id="capacity" name="capacity" required="required" aria-describedby="emailHelp">
+                  <input type="number" min="0" {% if action == 'edit' %} value="{{ confirm_truck.capacity|floatformat:2 }}" {% endif %}  class="form-control" id="capacity" name="capacity" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required="required" aria-describedby="emailHelp">
                 </div>
                 <div class="col-sm-4">
                   <select class="form-select form-control" id="unit" name="unit">
