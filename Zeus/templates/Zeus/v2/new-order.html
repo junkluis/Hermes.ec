@@ -512,6 +512,29 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, 
         }
     });
 }
+//destinoPoint
+$("#originPoint").on("change",function(){
+  var selecionado=this.value
+  $("#destinoPoint option").each(function(){
+    if(this.value==selecionado){
+      $(this).hide()
+      
+    }else{
+      if($("#destinoPoint").value==selecionado){
+        $("#destinoPoint").val(this.value)
+      }
+      
+      $(this).show()
+
+    }
+  })
+  $("#destinoPoint option").each(function(){
+    //console.log($(this).is(":hidden"))
+    console.log(this)
+
+  })
+ 
+})
 
 </script>
 {% endblock %}  

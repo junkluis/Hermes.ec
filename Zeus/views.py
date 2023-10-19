@@ -1240,6 +1240,7 @@ def ejemplo(request):
 
 
 def create_order_pdf(order_id):
+    return None
     path_wkhtmltopdf = '/app/bin/wkhtmltopdf'
     config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
