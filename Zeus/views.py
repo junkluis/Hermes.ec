@@ -128,12 +128,21 @@ def new_user(request):
         email = request.POST["email"]
         password = request.POST["password"]
         rol = request.POST["rol"]
-
+        tipoIdentificacion=request.POST["tipoIdentificacion"]
+        
+        
         error_list = []
         user_exist = User.objects.filter(username=identification)
         if len(user_exist) > 0:
             error_list.append('La Identificación ya fue usada')
 
+        if tipoIdentificacion=='cedula':
+            if  validarCedula(identification) is False:
+                 error_list.append('la identificación no coincide con cédula ecuatoriana')
+           
+
+
+        
         if password != None and password != '':
             password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
             if re.match(password_pattern, password) is None:
@@ -408,7 +417,7 @@ def new_order(request):
             )
         
         # Create PDF file
-        pdf_path = create_order_pdf(new_order.id)
+        #pdf_path = create_order_pdf(new_order.id)
 
 
         from django.core.files.base import ContentFile, File
@@ -1240,7 +1249,6 @@ def ejemplo(request):
 
 
 def create_order_pdf(order_id):
-    return None
     path_wkhtmltopdf = '/app/bin/wkhtmltopdf'
     config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
@@ -1252,3 +1260,68 @@ def create_order_pdf(order_id):
     pdfkit.from_url('https://hermes-ec.herokuapp.com/view_order_documents_pdf/'+str(order_id), pdf_path, options=options, configuration=config)
     return pdf_path
 
+def validarCedula(cedula):
+    s_digito_region = cedula[0:2]
+    digito_region=int (s_digito_region)
+    if (digito_region>=1 and digito_region<=24) is False:
+        return False
+    
+    ultimo_digito = int(cedula[9:10] )
+    #Agrupo todos los pares y los sumo
+    pares = int(cedula[1:2]) + int(cedula[3:4])+ int(cedula[5:6]) + int(cedula[7:8])
+    #Agrupo los impares, los multiplico por un factor de 2, si la resultante es > que 9 le restamos el 9 a la resultante
+    numero1 = int(cedula[0:1] )
+    numero1 = (numero1 * 2);
+    if numero1 > 9:
+        numero1 = numero1 - 9
+    
+    numero3 = int(cedula[2:3] )
+    numero3 = (numero3 * 2); 
+    if numero3 > 9:
+        numero3 = numero3 - 9 
+
+    numero5 = int(cedula[4:5] )
+    numero5 = (numero5 * 2); 
+    if numero5 > 9:
+        numero5 = numero5 - 9
+
+    numero7 = int(cedula[6:7] )
+    numero7 = (numero7 * 2); 
+    if numero7 > 9:
+        numero7 = numero7 - 9
+    
+    numero9 = int(cedula[8:9] )
+    numero9 = (numero9 * 2); 
+    if numero9 > 9:
+        numero9 = numero9 - 9
+    
+    impares = numero1 + numero3 + numero5 + numero7 + numero9
+    suma_total=pares+impares
+    print("impares"+str(impares))
+    print("pares"+str(pares))
+
+    #extraemos el primero digito
+    primer_digito_suma = str(suma_total)[0:1]
+
+    #Obtenemos la decena inmediata
+    decena = (int(primer_digito_suma) + 1)  * 10
+    #Obtenemos la resta de la decena inmediata - la suma_total esto nos da el digito validador
+    digito_validador = decena - suma_total
+
+    #Si el digito validador es = a 10 toma el valor de 0
+    if digito_validador == 10:
+        digito_validador = 0
+
+    print("digito_validador"+str(digito_validador))
+    print(""+str(type(digito_validador)))
+    print(""+str(type(ultimo_digito)))
+    print(digito_validador == ultimo_digito)
+
+
+
+    #Validamos que el digito validador sea igual al de la cedula
+    if digito_validador == ultimo_digito:
+        print("perro"+str(ultimo_digito))
+        return True
+
+    return False
