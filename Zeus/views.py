@@ -476,8 +476,6 @@ def new_order(request):
 
                 if not user.is_active:
                     inactive_driver.append(driver_json)
-                elif driver_json['placa'] == 'Sin asignar':
-                    inactive_truck.append(driver_json)
                 elif truck.status != 'Disponible':
                     inactive_truck.append(driver_json)
                 elif orders is not None:

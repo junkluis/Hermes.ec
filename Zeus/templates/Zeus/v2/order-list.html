@@ -27,6 +27,7 @@
                             <th> Camion </th>
                             <th> Ruta </th>
                             <th> Precio </th>
+                            <th> Salida </th>
                             <th> Estado </th>
                             <th> acciones </th>
                         </tr>
@@ -38,6 +39,7 @@
                                 <th>{{ order.truck }}</th>
                                 <th>{{ order.origin }} - {{ order.destination }}</th>
                                 <th> ${{ order.precio|floatformat:2 }} </th>
+                                <th><i class="mdi mdi-lock-clock"></i>  {{ order.tiempo_partida }} </th>
                                 <th>
                                   {% if order.status == 'Pendiente' %}
                                   <label class="badge badge-info">{{ order.status }}</label>

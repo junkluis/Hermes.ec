@@ -22,9 +22,14 @@
         <div class="card-body">
           <div>
                 <div class="row alig n-items-start">
-                  <h3>Informacion de Ordern N# {{ order.id|stringformat:"05d" }}</h3>
+                  <h3>Información de Ordern N# {{ order.id|stringformat:"05d" }}</h3>
                   
+                 
                 </div>
+                <div class="row alig n-items-start">
+                  <h4>Hora de salida: {{ order.tiempo_partida }} </h4>
+                </div>
+                
                 <div class="row">
                 <div class="row alig n-items-start col-6">
                   <h1 class="display-4" >Estado: 
@@ -132,7 +137,6 @@
         <h4 class="card-title">Archivos</h4>
         <div class="media">
             <div class="media-body">
-
                 {% for archivo in order.files %}
                     {% if archivo.name == 'guiaRemision' %}
                         <a type="button" class="btn btn-inverse-primary" target="_blank" href="/files/get/?name={{archivo.archivo}}" style="margin: 2px;"> <b>Guia de Remision </b></a>
