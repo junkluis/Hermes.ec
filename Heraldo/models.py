@@ -75,10 +75,10 @@ class Order(models.Model):
     location_coord_lat = models.CharField(max_length=255, blank=True, null=True)
     location_coord_long = models.CharField(max_length=255, blank=True, null=True)
     location_update = models.DateTimeField(auto_now=True)
-    peso = models.DecimalField(null=True, blank=True, max_digits=100, decimal_places=4)
-    tarifa = models.DecimalField(null=True, blank=True, max_digits=100, decimal_places=4)
-    precio = models.DecimalField(null=True, blank=True, max_digits=100, decimal_places=4)
-    distancia = models.DecimalField(null=True, blank=True, max_digits=100, decimal_places=4)
+    peso = models.DecimalField(null=True, blank=True, max_digits=100, decimal_places=100)
+    tarifa = models.DecimalField(null=True, blank=True, max_digits=100, decimal_places=100)
+    precio = models.DecimalField(null=True, blank=True, max_digits=100, decimal_places=100)
+    distancia = models.DecimalField(null=True, blank=True, max_digits=100, decimal_places=100)
     status = models.CharField(
         max_length=2,
         choices=ORDER_STATUS,
