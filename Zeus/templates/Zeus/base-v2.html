@@ -5,9 +5,9 @@
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
-  <meta http-equiv = "content-language" content = "en">
+  <meta http-equiv = "content-language" content = "es">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Transpflor s.a</title>
+  <title>Transpflor S.A</title>
   <!-- base:css -->
   <link rel="stylesheet" href="{% static 'css/materialdesignicons.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/vendor.bundle.base.css' %}">
@@ -67,7 +67,7 @@
         <li class="nav-item">
           <a class="nav-link" href="/orders">
             <i class="mdi mdi-package-variant menu-icon"></i>
-            <span class="menu-title">Ordenes Activas</span>
+            <span class="menu-title">Órdenes Activas</span>
           </a>
         </li>
         <li class="nav-item">
@@ -85,7 +85,7 @@
         <li class="nav-item">
           <a class="nav-link" href="/ordenes_completas">
             <i class="mdi mdi-package-variant-closed menu-icon"></i>
-            <span class="menu-title">Ordenes Completas</span>
+            <span class="menu-title">Órdenes Completas</span>
           </a>
         </li>
         <li class="nav-item">
@@ -131,9 +131,9 @@
           <div class="navbar-brand-wrapper">
           </div>
           <div>
-          <h1 class="font-weight-bold mb-0 d-none d-md-block mt-1" style="color:black; font-size: 3em; text-shadow: 2px 2px 10px white;">Transpflor s.a</h1> 
+          <h1 class="font-weight-bold mb-0 d-none d-md-block mt-1" style="color:black; font-size: 3em; text-shadow: 2px 2px 10px white;">Transpflor S.A</h1> 
           <br />
-          <h5 class="font-weight-bold mb-0 d-none d-md-block mt-1" style="color:black; text-shadow: 2px 2px 10px white;">Sistema de Envio y rastreo de envios</h5>
+          <h5 class="font-weight-bold mb-0 d-none d-md-block mt-1" style="color:black; text-shadow: 2px 2px 10px white;">Sistema de Envío y Rastreo de Envíos</h5>
           </div>
           <br />
           
@@ -202,7 +202,27 @@
   <script>
     $(document).ready( function () {
       $('#myTable').DataTable({
-        "order": []
+        "order": [],
+        "language": {
+          "emptyTable": "No hay información",
+        "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+        "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+        "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+        "infoPostFix": "",
+        "thousands": ",",
+        "lengthMenu": "Mostrar _MENU_ Entradas",
+        "loadingRecords": "Cargando...",
+        "processing": "Procesando...",
+        "search": "Buscar:",
+        "zeroRecords": "Sin resultados encontrados",
+        "paginate": {
+            "first": "Primero",
+            "last": "Ultimo",
+            "next": "Siguiente",
+            "previous": "Anterior"
+        }}
+
+        
       });
       $('a[class^="paginate_button"]').addClass('btn btn-light');
   } );
