@@ -16,13 +16,8 @@
                   {% csrf_token %}
                   <div class="row">
                     <div class="col-6">
-                        <label for="driver" class="form-label">Conductor</label>
-                        <select class="form-select" id="driver" name="driver">
-                            {% for driver in driver_list_json %}
-                                <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
-                            {% endfor %}
-                            <option value="00">Ninguno</option>
-                        </select>
+                        <label for="duenio" class="form-label">Dueño</label>
+                        <input type="text" class="form-control" id="duenio" name="duenio" placeholder="TRANSPFLOR S.A" >
                     </div>
                     <div class="col-6">
                         <label for="license" class="form-label">Licencia</label>

@@ -61,13 +61,6 @@
                       {% endfor %}
                       </optgroup>
                     {% endif %}
-                    {% if inactive_truck|length > 0 %}
-                      <optgroup label="Camiones en mantenimiento o sin asignar">
-                      {% for driver in inactive_truck %}
-                        <option disabled="disabled" value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.identificacion }} - {{ driver.name }} {{ driver.last_name }}</option>    
-                      {% endfor %}
-                      </optgroup>
-                    {% endif %}
                 
                 </select>
                 </div>
@@ -88,7 +81,37 @@
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label"><b>Camion asignado</b></label>
                 <div class="col-sm-9"> 
-                  <input type="text" readonly class="form-control"  class="form-control" id="camionAsignado" name="camionAsignado" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required="required" aria-describedby="emailHelp">
+                  <select class="form-select form-control" id="camionInfo" style="width: 100%"  name="camionAsignado">
+                    {% if truck_list|length > 0 %}
+                      <optgroup label="Camiones disponibles">
+                      {% for truck in truck_list %}
+                        <option value="{{ truck.license }}" >{{ truck.brand |upper }} - {{ truck.license |upper }} </option>    
+                      {% endfor %}
+                      </optgroup>
+                    {% endif %}
+                    {% if trucks_mantenimiento|length > 0 %}
+                      <optgroup label="Camiones en mantenimiento">
+                        {% for truck in trucks_mantenimiento %}
+                        <option disabled="disabled" style="background-color: gray;" value="{{ truck.id }}" >{{ truck.license|upper }} - {{ truck.brand|upper }}</option>    
+                      {% endfor %}
+                      </optgroup>
+                    {% endif %}
+                    {% if busy_trucks|length > 0 %}
+                      <optgroup label="Camiones en proceso de ordenes">
+                        {% for truck in busy_trucks %}
+                        <option disabled="disabled" value="{{ truck.id }}" >{{ truck.license|upper }} - {{ truck.brand|upper }}</option>    
+                      {% endfor %}
+                      </optgroup>
+                    {% endif %}
+                    {% if inactive_trucks_v2|length > 0 %}
+                      <optgroup label="Camiones inactivos">
+                        {% for truck in inactive_trucks_v2 %}
+                        <option disabled="disabled" value="{{ truck.id }}" >{{ truck.license }} - {{ truck.brand }}</option>    
+                      {% endfor %}
+                      </optgroup>
+                    {% endif %}
+                
+                </select>
                 </div>
               </div>
             </div>
@@ -260,6 +283,7 @@ $( document ).ready(function() {
 
   $('#client').select2();
   $('#driverInfo').select2();
+  $('#camionInfo').select2();
 
   $('#driverInfo').change(function() {
     var placa = getPlaca($('#driverInfo').val())

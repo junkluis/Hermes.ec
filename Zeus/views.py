@@ -28,7 +28,6 @@ from Hermes import settings
 
 
 from Zeus.constants import CAR_YEARS_CHOICES, ORDER_STATUS, MAP_KEY, USER_MAIL,  USER_MAIL_PASSWORD, SITE_URL, CAR_BRAND_CHOICES, CAR_COLOR_CHOICES
-from datetime import datetime
 
 
 
@@ -200,6 +199,7 @@ def trucks(request):
         truck_list_json.append({
             'id': truck.id,
             'driver': driver_name,
+            'duenio': truck.duenio,
             'capacity': f'{truck.capacity:.2f}' + ' ' +truck.measurement, 
             'brand': truck.brand,
             'color': truck.color,
@@ -254,11 +254,6 @@ def view_orders(request, order_id):
 def new_truck(request):
     if request.method =='POST':
         context = {}
-        driver_id = request.POST["driver"]
-        try:
-            driver = User.objects.get(pk=driver_id)
-        except:
-            driver = None
 
         error_list = []
         existing_trucks = Truck.objects.filter(license = request.POST["license"])
@@ -266,23 +261,6 @@ def new_truck(request):
             error_list.append('Ya existe un Camion registrado con la matricula '+ request.POST["license"])
 
         if len(error_list) > 0:
-
-            user_list = User.objects.filter(is_active=True)
-            driver_list_json = []
-            for user in user_list:
-                try:
-                    rol = Rol.objects.get(user=user)
-                except Rol.DoesNotExist:
-                    rol = None
-
-                if rol and rol.user_rol == 'DR':
-                    driver_list_json.append({
-                        'id': user.id,
-                        'name': user.first_name,
-                        'last_name': user.last_name,
-                    })
-
-            context['driver_list_json'] = driver_list_json
             context['car_years_choices'] = CAR_YEARS_CHOICES
             context['car_brands_choices'] = CAR_BRAND_CHOICES
             context['color_options'] = CAR_COLOR_CHOICES
@@ -292,13 +270,15 @@ def new_truck(request):
             context['confirm_truck'] = {
                 'license': request.POST["license"],
                 'capacity': request.POST["capacity"],
+                'duenio': request.POST["duenio"],
                 'color': request.POST["color"],
             }
             context['action'] = 'edit'
             return render(request, 'Zeus/v2/new-truck.html', context)
 
         Truck.objects.create(
-            user = driver,
+            user = None,
+            duenio = request.POST["duenio"],
             license = request.POST["license"],
             capacity = request.POST["capacity"],
             measurement = request.POST["unit"],
@@ -367,10 +347,7 @@ def new_order(request):
         distancia = float(request.POST['distanciaInput'].split(' ')[0])
         placa = request.POST['camionAsignado']
         tiempo = request.POST['tiempo']
-        print(tiempo)
         #datetime_object = datetime.strptime(tiempo, '%m/%d/%y, %H:%M')
-
-        
 
         responsible = User.objects.get(username = request.user.username)
         client = User.objects.get(id=client_id)
@@ -425,7 +402,7 @@ def new_order(request):
             )
         
         # Create PDF file
-        #pdf_path = create_order_pdf(new_order.id)
+        pdf_path = create_order_pdf(new_order.id)
 
 
         from django.core.files.base import ContentFile, File
@@ -450,6 +427,7 @@ def new_order(request):
 
     else:
         user_list = User.objects.filter()
+        all_trucks = Truck.objects.all()
         
         client_list = []
         driver_list = []
@@ -458,6 +436,22 @@ def new_order(request):
         busy_driver = []
         inactive_truck = []
 
+        truck_list = []
+        trucks_mantenimiento = []
+        busy_trucks = []
+        inactive_trucks_v2 = []
+
+        orders = Order.objects.filter(status='EP')
+        for truck in all_trucks:
+            json_truck = model_to_dict(truck)
+            if truck.is_active == False:
+                inactive_trucks_v2.append(json_truck)
+            elif truck.status == 'En Mantenimiento':
+                trucks_mantenimiento.append(json_truck)
+            elif orders.filter(truck=truck):
+                busy_trucks.append(json_truck)
+            else:
+                truck_list.append(json_truck)
 
         for user in user_list:
             try:
@@ -514,6 +508,11 @@ def new_order(request):
         context = {
             'action': 'new'
         }
+
+        context['truck_list'] = truck_list
+        context['trucks_mantenimiento'] = trucks_mantenimiento
+        context['busy_trucks'] = busy_trucks
+        context['inactive_trucks_v2'] = inactive_trucks_v2
         context['gkey'] = MAP_KEY
         context['client_list'] = client_list
         context['driver_list'] = driver_list

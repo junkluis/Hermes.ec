@@ -24,7 +24,7 @@
                         <tr>
                             <th> ID </th>
                             <th> </th>
-                            <th> Conductor </th>
+                            <th> Dueño </th>
                             <th> Capacidad </th>
                             <th> Placa </th>
                             <th> Marca </th>
@@ -46,12 +46,10 @@
                                     {% endif %}
                                     alt="{{ truck.is_active }}" width="20" >
                                   {% else %}
-                                  <label class="badge badge-warning">Mantenimiento</label>
+                                  <img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Red_Light_Icon.svg"  title="MANTENIMIENTO" alt="En mantenimiento" width="20" >
                                   {% endif %}
                                 </th>
-                                <th>
-                                  {% if truck.driver %} {{ truck.driver }} {% else %}Por definir  ⚠️  {% endif %}
-                                </th>
+                                <th>{{ truck.duenio }}</th>
                                 <th>{{ truck.capacity }}</th>
                                 <th>{{ truck.license }}</th>
                                 <th>{{ truck.brand }}</th>

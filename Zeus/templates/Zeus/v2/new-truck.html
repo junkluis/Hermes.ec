@@ -15,23 +15,9 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Conductor</label>
+                <label class="col-sm-3 col-form-label">Dueño</label>
                 <div class="col-sm-9"> 
-                  <select class="form-select form-control" id="driver" name="driver">
-                    <option value="00">Por Definir</option>
-                    {% for driver in driver_list_json %}
-                        {% if action == 'edit' %}
-                          {% if driver.id == confirm_truck.user %}
-                          <option value="{{ driver.id }}" selected>{{ driver.name }} {{ driver.last_name }}</option>
-                          {% else %}
-                          <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
-                          {% endif %}
-                        {% else %}
-                          <option value="{{ driver.id }}">{{ driver.name }} {{ driver.last_name }}</option>
-                        {% endif %}
-                        
-                    {% endfor %}
-                </select>           
+                  <input type="text" maxlength="20" {% if action == 'edit' %} value="{{ confirm_truck.duenio }}" {% else %} value="TRANSPFLOR S.A" {% endif %}  class="form-control" id="duenio" name="duenio" oninvalid="this.setCustomValidity('Campo requerido')"  oninput="setCustomValidity('')" required="required" aria-describedby="duenio">
                 </div>
               </div>
             </div>

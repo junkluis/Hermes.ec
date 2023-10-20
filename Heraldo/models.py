@@ -35,6 +35,7 @@ class Truck(models.Model):
         ('Lb', 'Pound'),
         ('Tn', 'Toneladas'),
     ]
+    duenio = models.CharField(max_length=100, default='TRANSPFLOR S.A')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     license = models.CharField(max_length=100)
     capacity = models.DecimalField(null=True, blank=True, max_digits=12, decimal_places=8)
