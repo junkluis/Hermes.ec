@@ -13,21 +13,21 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='order',
             name='distancia',
-            field=models.DecimalField(blank=True, decimal_places=100, max_digits=100, null=True),
+            field=models.DecimalField(blank=True, decimal_places=6, max_digits=100, null=True),
         ),
         migrations.AlterField(
             model_name='order',
             name='peso',
-            field=models.DecimalField(blank=True, decimal_places=100, max_digits=100, null=True),
+            field=models.DecimalField(blank=True, decimal_places=6, max_digits=100, null=True),
         ),
         migrations.AlterField(
             model_name='order',
             name='precio',
-            field=models.DecimalField(blank=True, decimal_places=100, max_digits=100, null=True),
+            field=models.DecimalField(blank=True, decimal_places=6, max_digits=100, null=True),
         ),
         migrations.AlterField(
             model_name='order',
             name='tarifa',
-            field=models.DecimalField(blank=True, decimal_places=100, max_digits=100, null=True),
+            field=models.DecimalField(blank=True, decimal_places=6, max_digits=100, null=True),
         ),
     ]
