@@ -14,7 +14,7 @@
                     </div>
                     <div class="col-3">
                         <button type="button" class="btn btn-outline-primary m-1" onclick="window.location.href='/new_order'"> 
-                            <i class="mdi mdi-package-variant-closed"></i> Nuevo Orden
+                            <i class="mdi mdi-package-variant-closed"></i> Nueva Orden
                         </button>
                     </div>
                 </div>
@@ -57,17 +57,8 @@
                                   {% if order.status == 'Finalizado' or order.status == 'Cancelado' %}
                                   <button type="button" class="btn btn btn-outline-primary" onclick="window.location.href='/ver_formulario/{{order.id}}'" title="Ruta"><i class="mdi mdi-format-line-weight"></i> Ver Formulario </button> &nbsp;  
                                   {% endif %}
-                                  {% if order.order_file %}
-                                  <button type="button" class="btn btn btn-outline-danger" onclick="window.location.href='/files/download?name={{order.order_file.archivo.name}}'" title="Informacion"><i class="mdi mdi-file-pdf"></i> </button> &nbsp;  
-                                  {% endif %}
-                                  {% if order.is_active is True %} 
-                                    <button type="button" class="btn btn btn-outline-warning" onclick="window.location.href='/view_order_documents/{{order.id}}'" title="Informacion"><i class="mdi mdi-information"></i> </button> &nbsp;  
-                                  {% else %}
-                                    <button type="button" class="btn btn btn-light" onclick="window.location.href='/not_implemented'" title="Reactivar">Reactivar</button> &nbsp;
-                                  {% endif %}
-                                  {% if order.status != 'Cancelado' %}
-                                  <button type="button" class="btn btn btn-outline-info" onclick="window.location.href='/view_orders/{{order.id}}'" title="Ruta"><i class="mdi mdi-map"></i> </button> &nbsp;  
-                                  {% endif %}
+                                 
+                                  
                                   
                                 
                                     

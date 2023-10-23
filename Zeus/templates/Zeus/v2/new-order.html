@@ -61,7 +61,14 @@
                       {% endfor %}
                       </optgroup>
                     {% endif %}
-                
+                    {% if pendiente_driver|length > 0 %}
+                    <optgroup label="Conductor con Orden pendientes">
+                    {% for driver in pendiente_driver %}
+                      <option disabled="disabled" value="{{ driver.id }}" data-truck="{{ driver.placa }}">{{ driver.identificacion }} - {{ driver.name }} {{ driver.last_name }}</option>    
+                    {% endfor %}
+                    </optgroup>
+                  {% endif %}
+                    
                 </select>
                 </div>
               </div>
@@ -96,6 +103,13 @@
                       {% endfor %}
                       </optgroup>
                     {% endif %}
+                    {% if pedientes_trucks_v2|length > 0 %}
+                    <optgroup label="Camiones pendientes de ordenes">
+                      {% for truck in pedientes_trucks_v2 %}
+                      <option disabled="disabled" value="{{ truck.id }}" >{{ truck.license }} - {{ truck.brand }}</option>    
+                    {% endfor %}
+                    </optgroup>
+                  {% endif %}
                     {% if busy_trucks|length > 0 %}
                       <optgroup label="Camiones en proceso de ordenes">
                         {% for truck in busy_trucks %}
@@ -110,7 +124,7 @@
                       {% endfor %}
                       </optgroup>
                     {% endif %}
-                
+                   
                 </select>
                 </div>
               </div>

@@ -228,7 +228,7 @@ def orders(request):
         order_list_json.append(order_json)
     
     context['order_list'] = order_list_json
-    context['view_title'] = 'Ordenes En Proceso o Pendientes'
+    context['view_title'] = 'Órdenes En Proceso o Pendientes'
     return render(request, 'Zeus/v2/order-list.html', context)
 
 @login_required(login_url="/login")
@@ -433,6 +433,7 @@ def new_order(request):
         driver_list = []
         
         inactive_driver = []
+        pendiente_driver = []
         busy_driver = []
         inactive_truck = []
 
@@ -440,8 +441,11 @@ def new_order(request):
         trucks_mantenimiento = []
         busy_trucks = []
         inactive_trucks_v2 = []
+        pedientes_trucks_v2 = []
 
         orders = Order.objects.filter(status='EP')
+        orders_pendientes = Order.objects.filter(status='PD')
+
         for truck in all_trucks:
             json_truck = model_to_dict(truck)
             if truck.is_active == False:
@@ -450,6 +454,8 @@ def new_order(request):
                 trucks_mantenimiento.append(json_truck)
             elif orders.filter(truck=truck):
                 busy_trucks.append(json_truck)
+            elif orders_pendientes.filter(truck=truck):
+                pedientes_trucks_v2.append(json_truck)
             else:
                 truck_list.append(json_truck)
 
@@ -468,18 +474,21 @@ def new_order(request):
                 }
                 truck = Truck.objects.filter(user=user).first()
                 orders = Order.objects.filter(driver=user, status='EP').first()
+                
+                orden_pendiente_driver= Order.objects.filter(driver=user, status='PD').first()
 
                 if truck:
                     driver_json['placa'] = truck.license
                 else:
                     driver_json['placa'] = 'Sin asignar'
 
+                #print(driver_json)
                 if not user.is_active:
                     inactive_driver.append(driver_json)
-                elif truck.status != 'Disponible':
-                    inactive_truck.append(driver_json)
                 elif orders is not None:
                     busy_driver.append(driver_json)
+                elif orden_pendiente_driver is not None:
+                    pendiente_driver.append(driver_json)
                 else:
                     driver_list.append(driver_json)
                 
@@ -519,6 +528,8 @@ def new_order(request):
         context['inactive_truck'] = inactive_truck
         context['tarifas'] = model_to_dict(tarifas)
         context['ubicaciones'] = ubicaciones_json
+        context['pedientes_trucks_v2'] = pedientes_trucks_v2
+        context['pendiente_driver'] = pendiente_driver
 
         return render(request, 'Zeus/v2/new-order.html', context)
 
@@ -1213,7 +1224,7 @@ def ordenes_completas(request):
         order_json['status'] = ORDER_STATUS[order.status]
         order_list_json.append(order_json)
     
-    context['view_title'] = 'Ordenes Finalizadas o Canceladas'
+    context['view_title'] = 'Órdenes Finalizadas o Canceladas'
     context['order_list'] = order_list_json
     return render(request, 'Zeus/v2/order-list.html', context)
 
@@ -1249,7 +1260,7 @@ def ejemplo(request):
         order_list_json.append(order_json)
     
     context['order_list'] = order_list_json
-    context['view_title'] = 'Ordenes En Proceso o Pendientes'
+    context['view_title'] = 'Órdenes En Proceso o Pendientes'
     return render(request, 'Zeus/v2/order-list.html', context)
 
 
